@@ -1,0 +1,17 @@
+<template>
+<require
+  from="./image-resizer.css"></require>
+<div
+  if.bind="!supported">
+  Not supported
+</div>
+<div
+  if.bind="supported">
+  <input
+    type="file"
+    change.delegate="update($event)">
+  <img
+    if.bind="preview"
+    src.bind="preview">
+</div>
+</template>
