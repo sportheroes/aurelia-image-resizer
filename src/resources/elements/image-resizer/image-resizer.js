@@ -9,6 +9,8 @@ export class ImageResizerCustomElement {
 
   @bindable input;
   @bindable output;
+  @bindable width = 100;
+  @bindable height = 100;
 
   currentZoom = 1;
   _movable = false;
@@ -25,6 +27,7 @@ export class ImageResizerCustomElement {
 
   constructor(element) {
     this.element = element;
+    this.canvas = document.createElement('canvas');
   }
 
   attached() {
@@ -121,16 +124,38 @@ export class ImageResizerCustomElement {
     if (imgDims.height + this.y < box.height) {
       this.y = -(imgDims.height - box.height);
     }
+
+    this._resizeCanvas();
   }
 
-  // TODO : resize and set ouput
-  _resizeCanvas(file) {
-    const ctx = this.canvas.getContext('2d');
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, 0, 0);
-    };
-    this.output = file;
+  _resizeCanvas() {
+    if (this._debouncedResizeCanvasTimeout) {
+      clearTimeout(this._debouncedResizeCanvasTimeout);
+    }
+    this._debouncedResizeCanvasTimeout = setTimeout(() => {
+      const ctx = this.canvas.getContext('2d');
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+
+      const img = new Image();
+      img.onload = () => {
+        const imgDim = Math.min(img.width, img.height);
+        let r = this.canvas.height / this.canvas.width;
+        let resized = [imgDim, imgDim * r];
+        if (this.canvas.height > this.canvas.width) {
+          r = this.canvas.width / this.canvas.height;
+          resized = [imgDim * r, imgDim];
+        }
+
+        ctx.drawImage(
+          img,
+          0, 0, resized[0], resized[1],
+          0, 0, this.canvas.width, this.canvas.height);
+
+        this.output = this.canvas.toDataURL();
+      };
+      img.src = this.input;
+    }, 500);
   }
 
   setPinch(e) {
