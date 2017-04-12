@@ -68,8 +68,20 @@ export class ImageResizerCustomElement {
   _moveInput(e) {
     if (!this._movable) return;
     e.preventDefault();
-    this.y += e.movementY;
-    this.x += e.movementX;
+    const newY = this.y + e.movementY;
+    const newX = this.x + e.movementX;
+
+    const box = this.element.getBoundingClientRect();
+    const imgDims = this.img.getBoundingClientRect();
+
+    if (newX <= 0 &&
+        imgDims.width + newX >= box.width) {
+      this.x = newX;
+    }
+    if (newY <= 0 &&
+        imgDims.height + newY >= box.height) {
+      this.y = newY;
+    }
   }
 
   // TODO : resize and set ouput
