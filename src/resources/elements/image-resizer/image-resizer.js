@@ -147,9 +147,14 @@ export class ImageResizerCustomElement {
           resized = [imgDim * r, imgDim];
         }
 
+        resized = resized.map(dim => dim / this.currentZoom);
+
+        const x = this.x * img.width / this.img.width;
+        const y = this.y * img.height / this.img.height;
+
         ctx.drawImage(
           img,
-          -this.x, -this.y, resized[0], resized[1],
+          -x, -y, resized[0], resized[1],
           0, 0, this.canvas.width, this.canvas.height);
 
         this.output = this.canvas.toDataURL();
