@@ -2,6 +2,15 @@
 <require
   from="./app.css"></require>
 <require
+  from="resources/elements/file-reader/file-reader"></require>
+<require
   from="resources/elements/image-resizer/image-resizer"></require>
-<image-resizer></image-resizer>
+
+<div
+  class="picture-upload">
+  <file-reader
+    file.bind="file"></file-reader>
+  ${file}
+</div>
+<!--image-resizer></image-resizer-->
 </template>
