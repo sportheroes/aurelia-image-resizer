@@ -10,7 +10,16 @@
   class="picture-upload">
   <file-reader
     file.bind="file"></file-reader>
-  ${file}
+  <image-resizer
+    if.bind="file"
+    input.bind="file"
+    output.bind="resized"></image-resizer>
 </div>
-<!--image-resizer></image-resizer-->
+
+<div
+  if.bind="resized">
+  ${resized}
+  <img
+    src="resized">
+</div>
 </template>

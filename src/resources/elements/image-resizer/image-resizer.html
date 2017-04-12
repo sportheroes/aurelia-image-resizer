@@ -2,16 +2,29 @@
 <require
   from="./image-resizer.css"></require>
 <div
-  if.bind="!supported">
+  if.bind="!supported"
+  class="unsupported">
   Not supported
 </div>
 <div
-  if.bind="supported">
-  <input
-    type="file"
-    change.delegate="update($event)">
-  <img
-    if.bind="preview"
-    src.bind="preview">
+  if.bind="supported"
+  class="supported">
+  <div
+    class="mask">
+    <img
+      src.bind="input"
+      css.bind="{ top: y + 'px', left: x + 'px'}"
+      ref="img"
+      onload.call="loaded()">
+    <svg width="100%" height="100%" viewBox="0 0 1200 1200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+        <title>Combined Shape</title>
+        <desc>Created with Sketch.</desc>
+        <defs></defs>
+        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <path d="M0,0 L1200,0 L1200,1200 L0,1200 L0,0 Z M608,1158 C911.756612,1158 1158,911.756612 1158,608 C1158,304.243388 911.756612,58 608,58 C304.243388,58 58,304.243388 58,608 C58,911.756612 304.243388,1158 608,1158 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+        </g>
+    </svg>
+  </div>
 </div>
 </template>
