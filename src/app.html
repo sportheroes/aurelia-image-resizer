@@ -10,18 +10,28 @@
   <file-reader
     file.bind="file"
     if.bind="!file"></file-reader>
-  <image-resizer
-    if.bind="file"
-    input.bind="file"
-    output.bind="resized"
-    width="256"
-    height="256"></image-resizer>
+  <div
+    if.bind="file">
+    <image-resizer
+      input.bind="file"
+      output.bind="resized"
+      width="256"
+      height="256"
+      zoom.bind="zoom"></image-resizer>
+    <button
+      click.delegate="zoom = zoom - 0.1">
+      -
+    </button>
+    <button
+      click.delegate="zoom = zoom + 0.1">
+      +
+    </button>
+  </div>
 </div>
-
 <div
   if.bind="resized">
   ${resized}
   <img
-    src="resized">
+    src.bind="resized">
 </div>
 </template>

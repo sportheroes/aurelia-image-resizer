@@ -1,4 +1,4 @@
-import {inject, bindable} from 'aurelia-framework';
+import {inject, bindable, bindingMode} from 'aurelia-framework';
 
 function ratio(w, h) {
   return w / h;
@@ -8,7 +8,7 @@ function ratio(w, h) {
 export class ImageResizerCustomElement {
 
   @bindable input;
-  @bindable output;
+  @bindable({ defaultBindingMode: bindingMode.twoWay })  output;
   @bindable width = 100;
   @bindable height = 100;
 
