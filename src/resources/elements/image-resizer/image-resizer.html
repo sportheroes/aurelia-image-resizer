@@ -1,6 +1,8 @@
 <template>
 <require
   from="./image-resizer.css"></require>
+<require
+  from="resources/attributes/pinch"></require>
 <div
   if.bind="!supported"
   class="unsupported">
@@ -10,7 +12,8 @@
   if.bind="supported"
   class="supported">
   <div
-    class="mask">
+    class="mask"
+    pinch.call="setPinch($event)">
     <img
       src.bind="input"
       css.bind="{ top: y + 'px', left: x + 'px'}"
@@ -26,5 +29,14 @@
         </g>
     </svg>
   </div>
+  <button
+    click.delegate="zoom(-1)">
+    -
+  </button>
+  <button
+    click.delegate="zoom(+1)">
+    +
+  </button>
+  DEBUG: <code>${debug}</code>
 </div>
 </template>

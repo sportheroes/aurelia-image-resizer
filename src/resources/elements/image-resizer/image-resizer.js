@@ -10,6 +10,7 @@ export class ImageResizerCustomElement {
   @bindable input;
   @bindable output;
 
+  currentZoom = 1;
   _movable = false;
   x = 0;
   y = 0;
@@ -31,7 +32,25 @@ export class ImageResizerCustomElement {
     this._listeners = {};
     this.element.addEventListener('mousedown', this._listeners.mousedown = e => this._movable = true);
     this.element.addEventListener('mousemove', this._listeners.mousemove = e => this._moveInput(e));
+    this.element.addEventListener('dragstart', e => e.preventDefault());
     document.addEventListener('mouseup', this._documentListeners = e => this._movable = false);
+
+    // Touch
+    let previousPosition;
+    this.element.addEventListener('touchmove', this._listeners.touchmove = e => {
+      e.preventDefault();
+      this._movable = true;
+      const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
+      if (previousPosition) {
+        this._movable = true;
+        e.movementX = newPosition[0] - previousPosition[0];
+        e.movementY = newPosition[1] - previousPosition[1];
+        this._moveInput(e);
+        this._movable = false;
+      }
+      previousPosition = newPosition;
+    });
+    this.element.addEventListener('touchend', this._listeners.touchend = e => previousPosition = null);
   }
 
   detached() {
@@ -51,7 +70,12 @@ export class ImageResizerCustomElement {
     this.x = 0;
   }
 
+  zoom(change) {
+    this._zoom(Math.max(1, this.currentZoom + change / 10));
+  }
+
   _zoom(zoom = 1) {
+    this.currentZoom = zoom;
     const box = this.element.getBoundingClientRect();
     const elWidth = box.width;
     const elHeight = box.height;
@@ -63,6 +87,7 @@ export class ImageResizerCustomElement {
       this.img.style.width = `${elWidth * zoom}px`;
       this.img.style.height = 'auto';
     }
+    setTimeout(() => this._constrain());
   }
 
   _moveInput(e) {
@@ -71,16 +96,26 @@ export class ImageResizerCustomElement {
     const newY = this.y + e.movementY;
     const newX = this.x + e.movementX;
 
+    this.x = newX;
+    this.y = newY;
+    setTimeout(() => this._constrain());
+  }
+
+  _constrain() {
     const box = this.element.getBoundingClientRect();
     const imgDims = this.img.getBoundingClientRect();
 
-    if (newX <= 0 &&
-        imgDims.width + newX >= box.width) {
-      this.x = newX;
+    if (this.x > 0) {
+      this.x = 0;
     }
-    if (newY <= 0 &&
-        imgDims.height + newY >= box.height) {
-      this.y = newY;
+    if (imgDims.width + this.x < box.width) {
+      this.x = -(imgDims.width - box.width);
+    }
+    if (this.y > 0) {
+      this.y = 0;
+    }
+    if (imgDims.height + this.y < box.height) {
+      this.y = -(imgDims.height - box.height);
     }
   }
 
@@ -92,5 +127,9 @@ export class ImageResizerCustomElement {
       ctx.drawImage(img, 0, 0);
     };
     this.output = file;
+  }
+
+  setPinch(e) {
+    this.zoom(e.pinch);
   }
 }
