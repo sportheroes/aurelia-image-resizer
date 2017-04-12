@@ -149,7 +149,7 @@ export class ImageResizerCustomElement {
 
         ctx.drawImage(
           img,
-          0, 0, resized[0], resized[1],
+          -this.x, -this.y, resized[0], resized[1],
           0, 0, this.canvas.width, this.canvas.height);
 
         this.output = this.canvas.toDataURL();
