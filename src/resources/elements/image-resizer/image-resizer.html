@@ -37,7 +37,10 @@
     click.delegate="zoom(+1)">
     +
   </button>
-  DEBUG: <code>${input}</code>
-  <img src.bind="output" style="border: 1px solid black">
+  DEBUG: <code>${output}</code>
+  <img
+    if.bind="output"
+    src.bind="output"
+    style="border: 1px solid black">
 </div>
 </template>

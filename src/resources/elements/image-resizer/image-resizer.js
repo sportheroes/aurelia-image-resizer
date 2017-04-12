@@ -33,27 +33,52 @@ export class ImageResizerCustomElement {
   attached() {
     this.supported = (window.File && window.FileReader && window.FileList && window.Blob);
     this._listeners = {};
+    this._documentListeners = {};
     this.element.addEventListener('mousedown', this._listeners.mousedown = e => this._movable = true);
-    this.element.addEventListener('mousemove', this._listeners.mousemove = e => this._moveInput(e));
+    document.addEventListener('mouseup', this._documentListeners.mouseup = e => this._movable = false);
+    this.element.addEventListener('mousemove', this._listeners.mousemove = e => {
+      if (!this._movable) return;
+      this._moveInput(e);
+    });
     this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
       e.preventDefault();
       this.zoom(e.deltaY / 100);
     });
     this.element.addEventListener('dragstart', e => e.preventDefault());
-    document.addEventListener('mouseup', this._documentListeners = e => this._movable = false);
+    document.addEventListener('keydown', this._documentListeners.keydown = e => {
+      switch (e.keyCode) {
+      case 39: // ➡
+        e.movementX = -1;
+        break;
+      case 37: // ⬅
+        e.movementX = 1;
+        break;
+      case 38: // ⬆
+        e.movementY = 1;
+        break;
+      case 40: // ⬇
+        e.movementY = -1;
+        break;
+      case 187: // +
+        return this.zoom(0.1);
+      case 189: // -
+        return this.zoom(-0.1);
+      default:
+        return;
+      }
+      console.log(e.movementY, e.movementX);
+      this._moveInput(e);
+    });
 
     // Touch
     let previousPosition;
     this.element.addEventListener('touchmove', this._listeners.touchmove = e => {
       e.preventDefault();
-      this._movable = true;
       const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
       if (previousPosition) {
-        this._movable = true;
         e.movementX = newPosition[0] - previousPosition[0];
         e.movementY = newPosition[1] - previousPosition[1];
         this._moveInput(e);
-        this._movable = false;
       }
       previousPosition = newPosition;
     });
@@ -64,7 +89,9 @@ export class ImageResizerCustomElement {
     for (const event of Object.keys(this._listeners)) {
       this.element.removeEventListener(event, this._listeners[event]);
     }
-    document.removeEventListener('mouseup', this._documentListeners);
+    for (const event of Object.keys(this._documentListeners)) {
+      document.removeEventListener(event, this._documentListeners[event]);
+    }
   }
 
   loaded() {
@@ -98,10 +125,9 @@ export class ImageResizerCustomElement {
   }
 
   _moveInput(e) {
-    if (!this._movable) return;
     e.preventDefault();
-    const newY = this.y + e.movementY;
-    const newX = this.x + e.movementX;
+    const newY = this.y + (e.movementY || 0);
+    const newX = this.x + (e.movementX || 0);
 
     this.x = newX;
     this.y = newY;
