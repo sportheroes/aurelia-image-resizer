@@ -32,6 +32,10 @@ export class ImageResizerCustomElement {
     this._listeners = {};
     this.element.addEventListener('mousedown', this._listeners.mousedown = e => this._movable = true);
     this.element.addEventListener('mousemove', this._listeners.mousemove = e => this._moveInput(e));
+    this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
+      e.preventDefault();
+      this.zoom(e.deltaY / 100);
+    });
     this.element.addEventListener('dragstart', e => e.preventDefault());
     document.addEventListener('mouseup', this._documentListeners = e => this._movable = false);
 
