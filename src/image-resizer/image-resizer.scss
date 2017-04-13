@@ -1,9 +1,12 @@
 image-resizer {
-   -moz-user-select: -moz-none;
-   -khtml-user-select: none;
-   -webkit-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
+  display: block;
+  width: 400px;
+  height: 400px;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   .unsupported {
 
   }
@@ -25,6 +28,8 @@ image-resizer {
       position: absolute;
       top: 0;
       left: 0;
+      max-height: none;
+      max-width: none;
     }
   }
 }

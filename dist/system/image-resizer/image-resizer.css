@@ -1,4 +1,7 @@
 image-resizer {
+  display: block;
+  width: 400px;
+  height: 400px;
   -moz-user-select: -moz-none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -16,4 +19,6 @@ image-resizer {
     image-resizer .mask img {
       position: absolute;
       top: 0;
-      left: 0; }
+      left: 0;
+      max-height: none;
+      max-width: none; }
