@@ -43,7 +43,7 @@ The component can bind a `zoom` attribute to manage the zoom value from the outs
 Install the package:
 
 ```shell
-npm install au-image-resizer --save
+npm install aurelia-image-resizer --save
 ```
 
 Add package configuration to `aurelia.json`:
@@ -51,8 +51,8 @@ Add package configuration to `aurelia.json`:
 ```json
  "dependencies": [
   {
-    "name": "au-image-resizer",
-    "path": "../node_modules/au-image-resizer/dist/amd",
+    "name": "aurelia-image-resizer",
+    "path": "../node_modules/aurelia-image-resizer/dist/amd",
     "main": "index",
     "resources": [
       "./**/*.css",
@@ -65,7 +65,7 @@ Add package configuration to `aurelia.json`:
 In [manual bootstrapping](http://aurelia.io/hub.html#/doc/article/aurelia/framework/latest/app-configuration-and-startup/4):
 
 ```javascript
-aurelia.use.plugin('aurelia-mdl-components');
+aurelia.use.plugin('aurelia-image-resizer');
 ```
 
 ## Building The Code

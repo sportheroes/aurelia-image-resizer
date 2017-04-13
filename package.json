@@ -1,6 +1,6 @@
 {
-  "name": "au-image-resizer",
-  "version": "1.0.0",
+  "name": "aurelia-image-resizer",
+  "version": "1.0.2",
   "description": "Aurelia component to load and resize an image",
   "keywords": [
     "aurelia",
@@ -10,16 +10,16 @@
     "ux",
     "ui"
   ],
-  "homepage": "https://github.com/sportheroes/au-image-resizer",
+  "homepage": "https://github.com/sportheroes/aurelia-image-resizer",
   "bugs": {
-    "url": "https://github.com/sportheroes/au-image-resizer/issues"
+    "url": "https://github.com/sportheroes/aurelia-image-resizer/issues"
   },
   "license": "CC0-1.0",
   "author": "Hadrien Lanneau <hadrien.lanneau@sportheroesgroup.com> (http://www.sportheroesgroup.com/)",
   "main": "dist/amd/index.js",
   "repository": {
     "type": "git",
-    "url": "http://github.com/aurelia/skeleton-plugin"
+    "url": "https://github.com/sportheroes/aurelia-image-resizer"
   },
   "devDependencies": {
     "aurelia-tools": "^1.0.0",
