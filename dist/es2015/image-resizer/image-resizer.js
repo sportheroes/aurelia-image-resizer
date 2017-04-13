@@ -1,4 +1,4 @@
-var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
+var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
 
 function _initDefineProp(target, property, descriptor, context) {
   if (!descriptor) return;
@@ -60,6 +60,10 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
 
     _initDefineProp(this, 'height', _descriptor4, this);
 
+    _initDefineProp(this, 'type', _descriptor5, this);
+
+    _initDefineProp(this, 'encoderOptions', _descriptor6, this);
+
     this.currentZoom = 1;
     this._movable = false;
     this.x = 0;
@@ -112,7 +116,6 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
         default:
           return;
       }
-      console.log(e.movementY, e.movementX);
       this._moveInput(e);
     });
 
@@ -225,7 +228,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
 
         ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, this.canvas.width, this.canvas.height);
 
-        this.output = this.canvas.toDataURL();
+        this.output = this.canvas.toDataURL(this.type, this.encoderOptions);
       };
       img.src = this.input;
     }, 500);
@@ -250,4 +253,10 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
   initializer: function () {
     return 100;
   }
+}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'type', [bindable], {
+  enumerable: true,
+  initializer: null
+}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [bindable], {
+  enumerable: true,
+  initializer: null
 })), _class2)) || _class);

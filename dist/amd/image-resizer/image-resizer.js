@@ -55,7 +55,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
+  var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
 
   function ratio(w, h) {
     return w / h;
@@ -72,6 +72,10 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
       _initDefineProp(this, 'width', _descriptor3, this);
 
       _initDefineProp(this, 'height', _descriptor4, this);
+
+      _initDefineProp(this, 'type', _descriptor5, this);
+
+      _initDefineProp(this, 'encoderOptions', _descriptor6, this);
 
       this.currentZoom = 1;
       this._movable = false;
@@ -133,7 +137,6 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
           default:
             return;
         }
-        console.log(e.movementY, e.movementX);
         _this._moveInput(e);
       });
 
@@ -288,7 +291,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
 
           ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
 
-          _this4.output = _this4.canvas.toDataURL();
+          _this4.output = _this4.canvas.toDataURL(_this4.type, _this4.encoderOptions);
         };
         img.src = _this4.input;
       }, 500);
@@ -315,5 +318,11 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     initializer: function initializer() {
       return 100;
     }
+  }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'type', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
+  }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: null
   })), _class2)) || _class);
 });

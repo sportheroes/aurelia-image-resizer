@@ -11,6 +11,8 @@ export class ImageResizerCustomElement {
   @bindable({ defaultBindingMode: bindingMode.twoWay })  output;
   @bindable width = 100;
   @bindable height = 100;
+  @bindable type;
+  @bindable encoderOptions;
 
   currentZoom = 1;
   _movable = false;
@@ -182,7 +184,7 @@ export class ImageResizerCustomElement {
           -x, -y, resized[0], resized[1],
           0, 0, this.canvas.width, this.canvas.height);
 
-        this.output = this.canvas.toDataURL();
+        this.output = this.canvas.toDataURL(this.type, this.encoderOptions);
       };
       img.src = this.input;
     }, 500);

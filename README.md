@@ -18,7 +18,7 @@ This plugin offers two UI components which help a user to pick an image file fro
 ## ImageResizer
 
 This component take an `input` and generate an `output`. If a valid base64 is set as `input`, then an interface is displayed with the image in a resizing interface the user can manipulate with mouse, keyboard or multitouch. After each operation, `output` is updated to contain the base64 if the resized jpeg image.
-The component can bind a `zoom` attribute to manage the zoom value from the outside. `height` and `width` are the dimensions of the final resized image.
+The component can bind a `zoom` attribute to manage the zoom value from the outside. `height` and `width` are the dimensions of the final resized image. `type` and `encoder-options` are optional attributes passed to [`toDataURL`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toDataURL) method to generate ouput image.
 
 ### Example
 

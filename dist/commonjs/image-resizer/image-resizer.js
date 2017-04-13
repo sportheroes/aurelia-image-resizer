@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ImageResizerCustomElement = undefined;
 
-var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4;
+var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
 
 var _aureliaFramework = require('aurelia-framework');
 
@@ -70,6 +70,10 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
 
     _initDefineProp(this, 'height', _descriptor4, this);
 
+    _initDefineProp(this, 'type', _descriptor5, this);
+
+    _initDefineProp(this, 'encoderOptions', _descriptor6, this);
+
     this.currentZoom = 1;
     this._movable = false;
     this.x = 0;
@@ -130,7 +134,6 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
         default:
           return;
       }
-      console.log(e.movementY, e.movementX);
       _this._moveInput(e);
     });
 
@@ -285,7 +288,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
 
         ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
 
-        _this4.output = _this4.canvas.toDataURL();
+        _this4.output = _this4.canvas.toDataURL(_this4.type, _this4.encoderOptions);
       };
       img.src = _this4.input;
     }, 500);
@@ -312,4 +315,10 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   initializer: function initializer() {
     return 100;
   }
+}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'type', [_aureliaFramework.bindable], {
+  enumerable: true,
+  initializer: null
+}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [_aureliaFramework.bindable], {
+  enumerable: true,
+  initializer: null
 })), _class2)) || _class);
