@@ -11,6 +11,7 @@ export class ImageResizerCustomElement {
   @bindable({ defaultBindingMode: bindingMode.twoWay })  output;
   @bindable width = 100;
   @bindable height = 100;
+  @bindable zoom = 1;
   @bindable type;
   @bindable encoderOptions;
 
@@ -44,7 +45,7 @@ export class ImageResizerCustomElement {
     });
     this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
       e.preventDefault();
-      this.zoom(e.deltaY / 100);
+      this.setZoom(e.deltaY / 100);
     });
     this.element.addEventListener('dragstart', e => e.preventDefault());
     document.addEventListener('keydown', this._documentListeners.keydown = e => {
@@ -62,9 +63,9 @@ export class ImageResizerCustomElement {
         e.movementY = -1;
         break;
       case 187: // +
-        return this.zoom(0.1);
+        return this.setZoom(0.1);
       case 189: // -
-        return this.zoom(-0.1);
+        return this.setZoom(-0.1);
       default:
         return;
       }
@@ -105,7 +106,11 @@ export class ImageResizerCustomElement {
     this.x = 0;
   }
 
-  zoom(change) {
+  zoomChanged(zoom) {
+    this._zoom(zoom);
+  }
+
+  setZoom(change) {
     this._zoom(Math.max(1, this.currentZoom + change / 10));
   }
 
@@ -191,6 +196,6 @@ export class ImageResizerCustomElement {
   }
 
   setPinch(e) {
-    this.zoom(e.pinch);
+    this.setZoom(e.pinch);
   }
 }

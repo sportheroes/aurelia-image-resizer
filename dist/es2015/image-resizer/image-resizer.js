@@ -1,4 +1,4 @@
-var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
+var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7;
 
 function _initDefineProp(target, property, descriptor, context) {
   if (!descriptor) return;
@@ -60,9 +60,11 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
 
     _initDefineProp(this, 'height', _descriptor4, this);
 
-    _initDefineProp(this, 'type', _descriptor5, this);
+    _initDefineProp(this, 'zoom', _descriptor5, this);
 
-    _initDefineProp(this, 'encoderOptions', _descriptor6, this);
+    _initDefineProp(this, 'type', _descriptor6, this);
+
+    _initDefineProp(this, 'encoderOptions', _descriptor7, this);
 
     this.currentZoom = 1;
     this._movable = false;
@@ -92,7 +94,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
     });
     this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
       e.preventDefault();
-      this.zoom(e.deltaY / 100);
+      this.setZoom(e.deltaY / 100);
     });
     this.element.addEventListener('dragstart', e => e.preventDefault());
     document.addEventListener('keydown', this._documentListeners.keydown = e => {
@@ -110,9 +112,9 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
           e.movementY = -1;
           break;
         case 187:
-          return this.zoom(0.1);
+          return this.setZoom(0.1);
         case 189:
-          return this.zoom(-0.1);
+          return this.setZoom(-0.1);
         default:
           return;
       }
@@ -152,7 +154,11 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
     this.x = 0;
   }
 
-  zoom(change) {
+  zoomChanged(zoom) {
+    this._zoom(zoom);
+  }
+
+  setZoom(change) {
     this._zoom(Math.max(1, this.currentZoom + change / 10));
   }
 
@@ -235,7 +241,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
   }
 
   setPinch(e) {
-    this.zoom(e.pinch);
+    this.setZoom(e.pinch);
   }
 }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'input', [bindable], {
   enumerable: true,
@@ -253,10 +259,15 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
   initializer: function () {
     return 100;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'type', [bindable], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'zoom', [bindable], {
+  enumerable: true,
+  initializer: function () {
+    return 1;
+  }
+}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'type', [bindable], {
   enumerable: true,
   initializer: null
-}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [bindable], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [bindable], {
   enumerable: true,
   initializer: null
 })), _class2)) || _class);

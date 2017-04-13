@@ -55,7 +55,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
+  var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7;
 
   function ratio(w, h) {
     return w / h;
@@ -73,9 +73,11 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
 
       _initDefineProp(this, 'height', _descriptor4, this);
 
-      _initDefineProp(this, 'type', _descriptor5, this);
+      _initDefineProp(this, 'zoom', _descriptor5, this);
 
-      _initDefineProp(this, 'encoderOptions', _descriptor6, this);
+      _initDefineProp(this, 'type', _descriptor6, this);
+
+      _initDefineProp(this, 'encoderOptions', _descriptor7, this);
 
       this.currentZoom = 1;
       this._movable = false;
@@ -111,7 +113,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
       });
       this.element.addEventListener('mousewheel', this._listeners.mousewheel = function (e) {
         e.preventDefault();
-        _this.zoom(e.deltaY / 100);
+        _this.setZoom(e.deltaY / 100);
       });
       this.element.addEventListener('dragstart', function (e) {
         return e.preventDefault();
@@ -131,9 +133,9 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
             e.movementY = -1;
             break;
           case 187:
-            return _this.zoom(0.1);
+            return _this.setZoom(0.1);
           case 189:
-            return _this.zoom(-0.1);
+            return _this.setZoom(-0.1);
           default:
             return;
         }
@@ -201,7 +203,11 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
       this.x = 0;
     };
 
-    ImageResizerCustomElement.prototype.zoom = function zoom(change) {
+    ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
+      this._zoom(zoom);
+    };
+
+    ImageResizerCustomElement.prototype.setZoom = function setZoom(change) {
       this._zoom(Math.max(1, this.currentZoom + change / 10));
     };
 
@@ -298,7 +304,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     };
 
     ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {
-      this.zoom(e.pinch);
+      this.setZoom(e.pinch);
     };
 
     return ImageResizerCustomElement;
@@ -318,10 +324,15 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     initializer: function initializer() {
       return 100;
     }
-  }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'type', [_aureliaFramework.bindable], {
+  }), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'zoom', [_aureliaFramework.bindable], {
+    enumerable: true,
+    initializer: function initializer() {
+      return 1;
+    }
+  }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'type', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
-  }), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [_aureliaFramework.bindable], {
+  }), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: null
   })), _class2)) || _class);
