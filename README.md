@@ -6,9 +6,9 @@ This plugin offers two UI components which help a user to pick an image file fro
 
 `<file-reader>` displays a file input and take a two-way binding attribute to store the base64 value of the selected file.
 
-### Exemple
+### Example
 
-```
+```html
 <file-reader
   file.bind="myFile"></file-reader>
 <code
@@ -20,9 +20,9 @@ This plugin offers two UI components which help a user to pick an image file fro
 This component take an `input` and generate an `output`. If a valid base64 is set as `input`, then an interface is displayed with the image in a resizing interface the user can manipulate with mouse, keyboard or multitouch. After each operation, `output` is updated to contain the base64 if the resized jpeg image.
 The component can bind a `zoom` attribute to manage the zoom value from the outside. `height` and `width` are the dimensions of the final resized image.
 
-### Exemple
+### Example
 
-```
+```html
 <image-resizer
   input.bind="input"
   output.bind="output"
@@ -34,6 +34,38 @@ The component can bind a `zoom` attribute to manage the zoom value from the outs
   value.bind="zoom">
 <code
   if.bind="output">${output}</code>
+```
+
+## Install
+
+### Aurelia CLI
+
+Install the package:
+
+```shell
+npm install au-image-resizer --save
+```
+
+Add package configuration to `aurelia.json`:
+
+```json
+ "dependencies": [
+  {
+    "name": "au-image-resizer",
+    "path": "../node_modules/au-image-resizer/dist/amd",
+    "main": "index",
+    "resources": [
+      "./**/*.css",
+      "./**/*.html"
+    ]
+  }
+]
+```
+
+In [manual bootstrapping](http://aurelia.io/hub.html#/doc/article/aurelia/framework/latest/app-configuration-and-startup/4):
+
+```javascript
+aurelia.use.plugin('aurelia-mdl-components');
 ```
 
 ## Building The Code
