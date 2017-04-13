@@ -66,7 +66,6 @@ export class ImageResizerCustomElement {
       default:
         return;
       }
-      console.log(e.movementY, e.movementX);
       this._moveInput(e);
     });
 
