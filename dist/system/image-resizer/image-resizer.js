@@ -109,7 +109,10 @@ System.register(['aurelia-framework'], function (_export, _context) {
             return _this._movable = true;
           });
           document.addEventListener('mouseup', this._documentListeners.mouseup = function (e) {
-            return _this._movable = false;
+            if (_this._movable) {
+              e.preventDefault();
+            }
+            _this._movable = false;
           });
           this.element.addEventListener('mousemove', this._listeners.mousemove = function (e) {
             if (!_this._movable) return;
