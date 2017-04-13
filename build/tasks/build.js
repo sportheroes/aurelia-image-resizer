@@ -4,6 +4,20 @@ let to5 = require('gulp-babel');
 let paths = require('../paths');
 let compilerOptions = require('../babel-options');
 let assign = Object.assign || require('object.assign');
+let sass = require('gulp-sass');
+let autoprefixer = require('gulp-autoprefixer');
+
+const AUTOPREFIXER_BROWSERS = [
+  'ie >= 10',
+  'ie_mob >= 10',
+  'ff >= 30',
+  'chrome >= 34',
+  'safari >= 7',
+  'opera >= 23',
+  'ios >= 7',
+  'android >= 4.4',
+  'bb >= 10'
+];
 
 gulp.task('build-html', function() {
   return gulp.src(paths.html)
@@ -14,7 +28,9 @@ gulp.task('build-html', function() {
 });
 
 gulp.task('build-css', function() {
-  return gulp.src(paths.css)
+  return gulp.src([paths.css, paths.scss])
+    .pipe(sass().on('error', sass.logError))
+    .pipe(autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest(paths.output + 'es2015'))
     .pipe(gulp.dest(paths.output + 'commonjs'))
     .pipe(gulp.dest(paths.output + 'amd'))
