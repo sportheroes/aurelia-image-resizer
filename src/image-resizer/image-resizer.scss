@@ -1,0 +1,35 @@
+image-resizer {
+  display: block;
+  width: 400px;
+  height: 400px;
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  .unsupported {
+
+  }
+  .supported {
+
+  }
+  .mask {
+    overflow: hidden;
+    position: relative;
+    cursor: move;
+    svg {
+      display: block;
+      height: 100%;
+      opacity: .4;
+      position: relative;
+      width: 100%;
+    }
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      max-height: none;
+      max-width: none;
+    }
+  }
+}
