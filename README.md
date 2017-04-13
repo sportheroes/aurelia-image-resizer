@@ -1,11 +1,40 @@
-# aurelia-skeleton-plugin
+# au-image-resizer
 
-[![ZenHub](https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png)](https://zenhub.io)
-[![Join the chat at https://gitter.im/aurelia/discuss](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aurelia/discuss?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+This plugin offers two UI components which help a user to pick an image file from its hard drive, convert it to base64 and resize it with a responsive interface. The plugin comes with two components which can be used independantly :
 
-This skeleton is part of the [Aurelia](http://www.aurelia.io/) platform. It sets up a standard aurelia plugin using gulp to build your ES6 code with the Babel compiler. Karma/Jasmine testing is also configured.
+## FileReader
 
-> To keep up to date on [Aurelia](http://www.aurelia.io/), please visit and subscribe to [the official blog](http://blog.aurelia.io/) and [our email list](http://eepurl.com/ces50j). We also invite you to [follow us on twitter](https://twitter.com/aureliaeffect). If you have questions, please [join our community on Gitter](https://gitter.im/aurelia/discuss) or use [stack overflow](http://stackoverflow.com/search?q=aurelia). Documentation can be found [in our developer hub](http://aurelia.io/hub.html). If you would like to have deeper insight into our development process, please install the [ZenHub](https://zenhub.io) Chrome or Firefox Extension and visit any of our repository's boards.
+`<file-reader>` displays a file input and take a two-way binding attribute to store the base64 value of the selected file.
+
+### Exemple
+
+```
+<file-reader
+  file.bind="myFile"></file-reader>
+<code
+  if.bind="myFile">${myFile}</code>
+```
+
+## ImageResizer
+
+This component take an `input` and generate an `output`. If a valid base64 is set as `input`, then an interface is displayed with the image in a resizing interface the user can manipulate with mouse, keyboard or multitouch. After each operation, `output` is updated to contain the base64 if the resized jpeg image.
+The component can bind a `zoom` attribute to manage the zoom value from the outside. `height` and `width` are the dimensions of the final resized image.
+
+### Exemple
+
+```
+<image-resizer
+  input.bind="input"
+  output.bind="output"
+  height="256"
+  width="256"
+  zoom.bind="zoom"></image-resizer>
+<input
+  type="number"
+  value.bind="zoom">
+<code
+  if.bind="output">${output}</code>
+```
 
 ## Building The Code
 
