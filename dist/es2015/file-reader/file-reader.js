@@ -56,10 +56,31 @@ export let FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bind
 
     const reader = new FileReader();
     reader.onload = fileE => {
-      this.file = fileE.target.result;
+      this.file = this._fixOrientation(fileE.target.result);
       this.fileInput.value = null;
     };
     reader.readAsDataURL(file);
+  }
+
+  _fixOrientation(file) {
+    const exif = EXIF.readFromBinaryFile(new BinaryFile(file));
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    switch (exif.Orientation) {
+      case 8:
+        ctx.rotate(90 * Math.PI / 180);
+        break;
+      case 3:
+        ctx.rotate(180 * Math.PI / 180);
+        break;
+      case 6:
+        ctx.rotate(-90 * Math.PI / 180);
+        break;
+      default:
+    }
+
+    return canvas.toDataURL();
   }
 }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'file', [_dec], {
   enumerable: true,

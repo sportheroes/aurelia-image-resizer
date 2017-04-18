@@ -69,10 +69,31 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
 
     var reader = new FileReader();
     reader.onload = function (fileE) {
-      _this.file = fileE.target.result;
+      _this.file = _this._fixOrientation(fileE.target.result);
       _this.fileInput.value = null;
     };
     reader.readAsDataURL(file);
+  };
+
+  FileReaderCustomElement.prototype._fixOrientation = function _fixOrientation(file) {
+    var exif = EXIF.readFromBinaryFile(new BinaryFile(file));
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+
+    switch (exif.Orientation) {
+      case 8:
+        ctx.rotate(90 * Math.PI / 180);
+        break;
+      case 3:
+        ctx.rotate(180 * Math.PI / 180);
+        break;
+      case 6:
+        ctx.rotate(-90 * Math.PI / 180);
+        break;
+      default:
+    }
+
+    return canvas.toDataURL();
   };
 
   return FileReaderCustomElement;
