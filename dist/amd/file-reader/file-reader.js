@@ -1,10 +1,18 @@
-define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+define(['exports', 'aurelia-framework', 'exif-js'], function (exports, _aureliaFramework, _exifJs) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.FileReaderCustomElement = undefined;
+
+  var _exifJs2 = _interopRequireDefault(_exifJs);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -70,12 +78,83 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
       var file = e.target.files && e.target.files[0];
       if (!file || !file.type.match('image.*')) return;
 
-      var reader = new FileReader();
-      reader.onload = function (fileE) {
-        _this.file = fileE.target.result;
+      this._loadImage(file).then(function (image) {
+        _this.file = image;
         _this.fileInput.value = null;
-      };
-      reader.readAsDataURL(file);
+      });
+    };
+
+    FileReaderCustomElement.prototype._loadImage = function _loadImage(file) {
+      var _this2 = this;
+
+      var fileAsUrl = void 0;
+      return this._readFileAsUrl(file).then(function (data) {
+        fileAsUrl = data;
+        return _this2._readFileAsBinary(file);
+      }).then(function (fileAsBinary) {
+        return _this2._readOrientationFromExif(fileAsBinary);
+      }).then(function (orientation) {
+        switch (orientation) {
+          case 7:
+          case 8:
+            return _this2._rotate(fileAsUrl, -90);
+          case 3:
+            return _this2._rotate(fileAsUrl, 180);
+          case 5:
+          case 6:
+            return _this2._rotate(fileAsUrl, 90);
+          default:
+            return fileAsUrl;
+        }
+      });
+    };
+
+    FileReaderCustomElement.prototype._readFileAsUrl = function _readFileAsUrl(file) {
+      return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          resolve(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    };
+
+    FileReaderCustomElement.prototype._readFileAsBinary = function _readFileAsBinary(file) {
+      return new Promise(function (resolve) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          resolve(e.target.result);
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    };
+
+    FileReaderCustomElement.prototype._readOrientationFromExif = function _readOrientationFromExif(fileAsBinary) {
+      var exif = _exifJs2.default.readFromBinaryFile(fileAsBinary);
+      return exif && exif.Orientation || 0;
+    };
+
+    FileReaderCustomElement.prototype._rotate = function _rotate(fileAsUrl, degrees) {
+      return new Promise(function (resolve) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var img = new Image();
+        img.onload = function () {
+          var width = img.width;
+          var height = img.height;
+          var x = width / 2;
+          var y = height / 2;
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.translate(x, y);
+          ctx.rotate(degrees * Math.PI / 180);
+          ctx.drawImage(img, -width / 2, -height / 2, width, height);
+          ctx.restore();
+          resolve(canvas.toDataURL());
+        };
+        img.src = fileAsUrl;
+      });
     };
 
     return FileReaderCustomElement;

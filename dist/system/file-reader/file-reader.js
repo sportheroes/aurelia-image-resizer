@@ -1,9 +1,9 @@
 'use strict';
 
-System.register(['aurelia-framework'], function (_export, _context) {
+System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
   "use strict";
 
-  var bindable, bindingMode, _dec, _desc, _value, _class, _descriptor, FileReaderCustomElement;
+  var bindable, bindingMode, EXIF, _dec, _desc, _value, _class, _descriptor, FileReaderCustomElement;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -58,6 +58,8 @@ System.register(['aurelia-framework'], function (_export, _context) {
     setters: [function (_aureliaFramework) {
       bindable = _aureliaFramework.bindable;
       bindingMode = _aureliaFramework.bindingMode;
+    }, function (_exifJs) {
+      EXIF = _exifJs.default;
     }],
     execute: function () {
       _export('FileReaderCustomElement', FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bindingMode.twoWay }), (_class = function () {
@@ -73,12 +75,83 @@ System.register(['aurelia-framework'], function (_export, _context) {
           var file = e.target.files && e.target.files[0];
           if (!file || !file.type.match('image.*')) return;
 
-          var reader = new FileReader();
-          reader.onload = function (fileE) {
-            _this.file = fileE.target.result;
+          this._loadImage(file).then(function (image) {
+            _this.file = image;
             _this.fileInput.value = null;
-          };
-          reader.readAsDataURL(file);
+          });
+        };
+
+        FileReaderCustomElement.prototype._loadImage = function _loadImage(file) {
+          var _this2 = this;
+
+          var fileAsUrl = void 0;
+          return this._readFileAsUrl(file).then(function (data) {
+            fileAsUrl = data;
+            return _this2._readFileAsBinary(file);
+          }).then(function (fileAsBinary) {
+            return _this2._readOrientationFromExif(fileAsBinary);
+          }).then(function (orientation) {
+            switch (orientation) {
+              case 7:
+              case 8:
+                return _this2._rotate(fileAsUrl, -90);
+              case 3:
+                return _this2._rotate(fileAsUrl, 180);
+              case 5:
+              case 6:
+                return _this2._rotate(fileAsUrl, 90);
+              default:
+                return fileAsUrl;
+            }
+          });
+        };
+
+        FileReaderCustomElement.prototype._readFileAsUrl = function _readFileAsUrl(file) {
+          return new Promise(function (resolve) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              resolve(e.target.result);
+            };
+            reader.readAsDataURL(file);
+          });
+        };
+
+        FileReaderCustomElement.prototype._readFileAsBinary = function _readFileAsBinary(file) {
+          return new Promise(function (resolve) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              resolve(e.target.result);
+            };
+            reader.readAsArrayBuffer(file);
+          });
+        };
+
+        FileReaderCustomElement.prototype._readOrientationFromExif = function _readOrientationFromExif(fileAsBinary) {
+          var exif = EXIF.readFromBinaryFile(fileAsBinary);
+          return exif && exif.Orientation || 0;
+        };
+
+        FileReaderCustomElement.prototype._rotate = function _rotate(fileAsUrl, degrees) {
+          return new Promise(function (resolve) {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            var img = new Image();
+            img.onload = function () {
+              var width = img.width;
+              var height = img.height;
+              var x = width / 2;
+              var y = height / 2;
+              canvas.width = width;
+              canvas.height = height;
+
+              ctx.translate(x, y);
+              ctx.rotate(degrees * Math.PI / 180);
+              ctx.drawImage(img, -width / 2, -height / 2, width, height);
+              ctx.restore();
+              resolve(canvas.toDataURL());
+            };
+            img.src = fileAsUrl;
+          });
         };
 
         return FileReaderCustomElement;

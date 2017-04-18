@@ -66,5 +66,8 @@
     "devDependencies": {
       "aurelia-polyfills": "^1.0.0"
     }
+  },
+  "dependencies": {
+    "exif-js": "^2.2.1"
   }
 }

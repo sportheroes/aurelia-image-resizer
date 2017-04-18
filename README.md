@@ -50,10 +50,11 @@ Add package configuration to `aurelia.json`:
 
 ```json
  "dependencies": [
-  {
+  "exif-js", {
     "name": "aurelia-image-resizer",
     "path": "../node_modules/aurelia-image-resizer/dist/amd",
     "main": "index",
+    "deps": "exif-js",
     "resources": [
       "./**/*.css",
       "./**/*.html"
