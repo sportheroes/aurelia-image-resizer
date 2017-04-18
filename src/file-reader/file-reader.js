@@ -30,12 +30,12 @@ export class FileReaderCustomElement {
       switch (orientation) {
       case 7:
       case 8:
-        return this._rotate(fileAsUrl, 90);
+        return this._rotate(fileAsUrl, -90);
       case 3:
         return this._rotate(fileAsUrl, 180);
       case 5:
       case 6:
-        return this._rotate(fileAsUrl, -90);
+        return this._rotate(fileAsUrl, 90);
       default:
         return fileAsUrl;
       }

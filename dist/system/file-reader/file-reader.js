@@ -94,12 +94,12 @@ System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
             switch (orientation) {
               case 7:
               case 8:
-                return _this2._rotate(fileAsUrl, 90);
+                return _this2._rotate(fileAsUrl, -90);
               case 3:
                 return _this2._rotate(fileAsUrl, 180);
               case 5:
               case 6:
-                return _this2._rotate(fileAsUrl, -90);
+                return _this2._rotate(fileAsUrl, 90);
               default:
                 return fileAsUrl;
             }
