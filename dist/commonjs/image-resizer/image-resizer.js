@@ -208,7 +208,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   };
 
   ImageResizerCustomElement.prototype.setZoom = function setZoom(change) {
-    this._zoom(Math.max(1, this.currentZoom + change / 10));
+    this.zoom = this.currentZoom + change;
   };
 
   ImageResizerCustomElement.prototype._zoom = function _zoom() {
@@ -216,7 +216,8 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
 
     var zoom = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
-    this.currentZoom = zoom;
+    this.currentZoom = +zoom;
+    zoom = Math.min(100, Math.max(1, this.currentZoom));
     var box = this.element.getBoundingClientRect();
     var elWidth = box.width;
     var elHeight = box.height;
