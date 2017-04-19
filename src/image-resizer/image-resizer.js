@@ -116,11 +116,12 @@ export class ImageResizerCustomElement {
   }
 
   setZoom(change) {
-    this._zoom(Math.max(1, this.currentZoom + change / 10));
+    this.zoom = this.currentZoom + change;
   }
 
   _zoom(zoom = 1) {
-    this.currentZoom = zoom;
+    this.currentZoom = +zoom;
+    zoom = Math.min(100, Math.max(1, this.currentZoom));
     const box = this.element.getBoundingClientRect();
     const elWidth = box.width;
     const elHeight = box.height;
