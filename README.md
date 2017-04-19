@@ -1,4 +1,4 @@
-# au-image-resizer
+# aurelia-image-resizer
 
 This plugin offers two UI components which help a user to pick an image file from its hard drive, convert it to base64 and resize it with a responsive interface. The plugin comes with two components which can be used independantly :
 
