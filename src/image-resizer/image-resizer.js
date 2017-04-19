@@ -56,16 +56,16 @@ export class ImageResizerCustomElement {
     document.addEventListener('keydown', this._documentListeners.keydown = e => {
       switch (e.keyCode) {
       case 39: // ➡
-        e.movementX = -1;
-        break;
-      case 37: // ⬅
         e.movementX = 1;
         break;
+      case 37: // ⬅
+        e.movementX = -1;
+        break;
       case 38: // ⬆
-        e.movementY = 1;
+        e.movementY = -1;
         break;
       case 40: // ⬇
-        e.movementY = -1;
+        e.movementY = 1;
         break;
       case 187: // +
         return this.setZoom(0.1);

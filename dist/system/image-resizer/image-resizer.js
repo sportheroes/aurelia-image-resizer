@@ -128,16 +128,16 @@ System.register(['aurelia-framework'], function (_export, _context) {
           document.addEventListener('keydown', this._documentListeners.keydown = function (e) {
             switch (e.keyCode) {
               case 39:
-                e.movementX = -1;
-                break;
-              case 37:
                 e.movementX = 1;
                 break;
+              case 37:
+                e.movementX = -1;
+                break;
               case 38:
-                e.movementY = 1;
+                e.movementY = -1;
                 break;
               case 40:
-                e.movementY = -1;
+                e.movementY = 1;
                 break;
               case 187:
                 return _this.setZoom(0.1);
