@@ -305,7 +305,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   };
 
   ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {
-    this.setZoom(e.pinch);
+    this.setZoom(e.pinch / 10);
   };
 
   return ImageResizerCustomElement;

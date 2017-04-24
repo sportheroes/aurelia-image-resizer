@@ -1,34 +1,28 @@
-var _dec, _class;
-
-import { inject } from 'aurelia-framework';
-
-export let PinchCustomAttribute = (_dec = inject(Element), _dec(_class = class PinchCustomAttribute {
-  constructor(element) {
-    this.element = element;
-  }
-
+export let PinchCustomAttribute = class PinchCustomAttribute {
   attached() {
     let previousDistance;
-    this.element.addEventListener('touchstart', e => {
-      if (e.changedTouches.length > 1) {
-        const previous = this._readTouches(e.changedTouches);
-        previousDistance = this._distance({ ax: previous[1].x, ay: previous[1].y }, { bx: previous[0].x, by: previous[0].y });
-      }
+    document.body.addEventListener('touchstart', this._touchstart = e => {
+      previousDistance = 0;
     }, false);
-    this.element.addEventListener('touchmove', e => {
-      if (e.changedTouches.length > 1 && previousDistance) {
+    document.body.addEventListener('touchmove', this._touchmove = e => {
+      if (e.targetTouches.length > 1) {
         e.preventDefault();
-        const end = this._readTouches(e.changedTouches);
+        const end = this._readTouches(e.targetTouches);
         const endDistance = this._distance({ ax: end[1].x, ay: end[1].y }, { bx: end[0].x, by: end[0].y });
-
-        if (endDistance > previousDistance) {
-          this.value({ pinch: 1 });
-        } else {
-          this.value({ pinch: -1 });
+        if (previousDistance) {
+          if (endDistance > previousDistance) {
+            this.value({ pinch: 1 });
+          } else {
+            this.value({ pinch: -1 });
+          }
         }
         previousDistance = endDistance;
       }
     }, false);
+  }
+  detached() {
+    document.body.removeEventListener('touchmove', this._touchmove);
+    document.body.removeEventListener('touchstart', this._touchstart);
   }
 
   _distance({ ax, ay }, { bx, by }) {
@@ -45,4 +39,4 @@ export let PinchCustomAttribute = (_dec = inject(Element), _dec(_class = class P
     }
     return touchesPositions;
   }
-}) || _class);
+};

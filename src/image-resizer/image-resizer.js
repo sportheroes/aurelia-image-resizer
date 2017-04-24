@@ -202,6 +202,6 @@ export class ImageResizerCustomElement {
   }
 
   setPinch(e) {
-    this.setZoom(e.pinch);
+    this.setZoom(e.pinch / 10);
   }
 }

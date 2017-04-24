@@ -308,7 +308,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     };
 
     ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {
-      this.setZoom(e.pinch);
+      this.setZoom(e.pinch / 10);
     };
 
     return ImageResizerCustomElement;
