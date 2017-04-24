@@ -247,7 +247,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
   }
 
   setPinch(e) {
-    this.setZoom(e.pinch);
+    this.setZoom(e.pinch / 10);
   }
 }, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'input', [bindable], {
   enumerable: true,

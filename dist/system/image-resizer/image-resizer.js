@@ -312,7 +312,7 @@ System.register(['aurelia-framework'], function (_export, _context) {
         };
 
         ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {
-          this.setZoom(e.pinch);
+          this.setZoom(e.pinch / 10);
         };
 
         return ImageResizerCustomElement;

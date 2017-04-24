@@ -3,45 +3,41 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PinchCustomAttribute = undefined;
-
-var _dec, _class;
-
-var _aureliaFramework = require('aurelia-framework');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var PinchCustomAttribute = exports.PinchCustomAttribute = (_dec = (0, _aureliaFramework.inject)(Element), _dec(_class = function () {
-  function PinchCustomAttribute(element) {
+var PinchCustomAttribute = exports.PinchCustomAttribute = function () {
+  function PinchCustomAttribute() {
     _classCallCheck(this, PinchCustomAttribute);
-
-    this.element = element;
   }
 
   PinchCustomAttribute.prototype.attached = function attached() {
     var _this = this;
 
     var previousDistance = void 0;
-    this.element.addEventListener('touchstart', function (e) {
-      if (e.changedTouches.length > 1) {
-        var previous = _this._readTouches(e.changedTouches);
-        previousDistance = _this._distance({ ax: previous[1].x, ay: previous[1].y }, { bx: previous[0].x, by: previous[0].y });
-      }
+    document.body.addEventListener('touchstart', this._touchstart = function (e) {
+      previousDistance = 0;
     }, false);
-    this.element.addEventListener('touchmove', function (e) {
-      if (e.changedTouches.length > 1 && previousDistance) {
+    document.body.addEventListener('touchmove', this._touchmove = function (e) {
+      if (e.targetTouches.length > 1) {
         e.preventDefault();
-        var end = _this._readTouches(e.changedTouches);
+        var end = _this._readTouches(e.targetTouches);
         var endDistance = _this._distance({ ax: end[1].x, ay: end[1].y }, { bx: end[0].x, by: end[0].y });
-
-        if (endDistance > previousDistance) {
-          _this.value({ pinch: 1 });
-        } else {
-          _this.value({ pinch: -1 });
+        if (previousDistance) {
+          if (endDistance > previousDistance) {
+            _this.value({ pinch: 1 });
+          } else {
+            _this.value({ pinch: -1 });
+          }
         }
         previousDistance = endDistance;
       }
     }, false);
+  };
+
+  PinchCustomAttribute.prototype.detached = function detached() {
+    document.body.removeEventListener('touchmove', this._touchmove);
+    document.body.removeEventListener('touchstart', this._touchstart);
   };
 
   PinchCustomAttribute.prototype._distance = function _distance(_ref, _ref2) {
@@ -65,4 +61,4 @@ var PinchCustomAttribute = exports.PinchCustomAttribute = (_dec = (0, _aureliaFr
   };
 
   return PinchCustomAttribute;
-}()) || _class);
+}();
