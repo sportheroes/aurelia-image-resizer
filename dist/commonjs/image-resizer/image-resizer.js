@@ -204,6 +204,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   };
 
   ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
+    if (!this.img) return;
     this._zoom(zoom);
   };
 

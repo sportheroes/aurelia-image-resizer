@@ -207,6 +207,7 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     };
 
     ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
+      if (!this.img) return;
       this._zoom(zoom);
     };
 

@@ -112,6 +112,7 @@ export class ImageResizerCustomElement {
   }
 
   zoomChanged(zoom) {
+    if (!this.img) return;
     this._zoom(zoom);
   }
 
