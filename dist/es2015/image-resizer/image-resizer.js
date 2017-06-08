@@ -160,6 +160,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
   }
 
   zoomChanged(zoom) {
+    if (!this.img) return;
     this._zoom(zoom);
   }
 

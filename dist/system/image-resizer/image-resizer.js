@@ -211,6 +211,7 @@ System.register(['aurelia-framework'], function (_export, _context) {
         };
 
         ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
+          if (!this.img) return;
           this._zoom(zoom);
         };
 
