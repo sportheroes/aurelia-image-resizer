@@ -58,8 +58,8 @@ function ratio(w, h) {
   return w / h;
 }
 
-var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, _aureliaFramework.inject)(Element), _dec2 = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), _dec(_class = (_class2 = function () {
-  function ImageResizerCustomElement(element) {
+var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, _aureliaFramework.inject)(Element, _aureliaFramework.EventManager), _dec2 = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), _dec(_class = (_class2 = function () {
+  function ImageResizerCustomElement(element, eventManager) {
     _classCallCheck(this, ImageResizerCustomElement);
 
     _initDefineProp(this, 'input', _descriptor, this);
@@ -89,6 +89,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
     };
 
     this.element = element;
+    this.eventManager = eventManager;
     this.canvas = document.createElement('canvas');
   }
 
@@ -96,29 +97,22 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
     var _this = this;
 
     this.supported = window.File && window.FileReader && window.FileList && window.Blob;
-    this._listeners = {};
-    this._documentListeners = {};
-    this.element.addEventListener('mousedown', this._listeners.mousedown = function (e) {
+    this._listeners = [this.eventManager.addEventListener(this.element, 'mousedown', function (e) {
       return _this._movable = true;
-    });
-    document.addEventListener('mouseup', this._documentListeners.mouseup = function (e) {
+    }, true), this.eventManager.addEventListener(document, 'mouseup', function (e) {
       if (_this._movable) {
         e.preventDefault();
       }
       _this._movable = false;
-    });
-    this.element.addEventListener('mousemove', this._listeners.mousemove = function (e) {
+    }, true), this.eventManager.addEventListener(this.element, 'mousemove', function (e) {
       if (!_this._movable) return;
       _this._moveInput(e);
-    });
-    this.element.addEventListener('mousewheel', this._listeners.mousewheel = function (e) {
+    }), this.eventManager.addEventListener(this.element, 'mousewheel', function (e) {
       e.preventDefault();
       _this.setZoom(e.deltaY / 100);
-    });
-    this.element.addEventListener('dragstart', function (e) {
+    }), this.eventManager.addEventListener(this.element, 'dragstart', function (e) {
       return e.preventDefault();
-    });
-    document.addEventListener('keydown', this._documentListeners.keydown = function (e) {
+    }), this.eventManager.addEventListener(document, 'keydown', function (e) {
       switch (e.keyCode) {
         case 39:
           e.movementX = 1;
@@ -140,10 +134,7 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
           return;
       }
       _this._moveInput(e);
-    });
-
-    var previousPosition = void 0;
-    this.element.addEventListener('touchmove', this._listeners.touchmove = function (e) {
+    }), this.eventManager.addEventListener(this.element, 'touchmove', function (e) {
       e.preventDefault();
       var newPosition = [e.touches[0].screenX, e.touches[0].screenY];
       if (previousPosition) {
@@ -152,14 +143,15 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
         _this._moveInput(e);
       }
       previousPosition = newPosition;
-    });
-    this.element.addEventListener('touchend', this._listeners.touchend = function (e) {
+    }), this.eventManager.addEventListener(this.element, 'touchend', function (e) {
       return previousPosition = null;
-    });
+    })];
+
+    this._resizeCtnAsRatio();
   };
 
   ImageResizerCustomElement.prototype.detached = function detached() {
-    for (var _iterator = Object.keys(this._listeners), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+    for (var _iterator = this._listeners, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
       var _ref;
 
       if (_isArray) {
@@ -171,25 +163,9 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
         _ref = _i.value;
       }
 
-      var event = _ref;
+      var off = _ref;
 
-      this.element.removeEventListener(event, this._listeners[event]);
-    }
-    for (var _iterator2 = Object.keys(this._documentListeners), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        _i2 = _iterator2.next();
-        if (_i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _event = _ref2;
-
-      document.removeEventListener(_event, this._documentListeners[_event]);
+      off();
     }
   };
 
@@ -201,6 +177,14 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
     this._zoom(1);
     this.y = 0;
     this.x = 0;
+  };
+
+  ImageResizerCustomElement.prototype.widthChanged = function widthChanged() {
+    this._resizeCtnAsRatio();
+  };
+
+  ImageResizerCustomElement.prototype.heightChanged = function heightChanged() {
+    this._resizeCtnAsRatio();
   };
 
   ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
@@ -303,6 +287,10 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
       };
       img.src = _this4.input;
     }, 500);
+  };
+
+  ImageResizerCustomElement.prototype._resizeCtnAsRatio = function _resizeCtnAsRatio() {
+    this.element.style.paddingTop = this.height / this.width * 100 + '%';
   };
 
   ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {

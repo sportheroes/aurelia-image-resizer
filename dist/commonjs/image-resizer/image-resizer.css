@@ -1,14 +1,19 @@
 image-resizer {
   display: block;
-  width: 400px;
-  height: 400px;
   -moz-user-select: -moz-none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  user-select: none; }
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  width: 100%; }
   image-resizer .mask {
     overflow: hidden;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     cursor: move; }
     image-resizer .mask svg {
       display: block;
@@ -21,4 +26,5 @@ image-resizer {
       top: 0;
       left: 0;
       max-height: none;
-      max-width: none; }
+      max-width: none;
+      width: 100%; }

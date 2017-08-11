@@ -1,10 +1,10 @@
-import {inject, bindable, bindingMode} from 'aurelia-framework';
+import {inject, bindable, bindingMode, EventManager} from 'aurelia-framework';
 
 function ratio(w, h) {
   return w / h;
 }
 
-@inject(Element)
+@inject(Element, EventManager)
 export class ImageResizerCustomElement {
 
   @bindable input;
@@ -28,76 +28,73 @@ export class ImageResizerCustomElement {
     }
   };
 
-  constructor(element) {
+  constructor(element, eventManager) {
     this.element = element;
+    this.eventManager = eventManager;
     this.canvas = document.createElement('canvas');
   }
 
   attached() {
     this.supported = (window.File && window.FileReader && window.FileList && window.Blob);
-    this._listeners = {};
-    this._documentListeners = {};
-    this.element.addEventListener('mousedown', this._listeners.mousedown = e => this._movable = true);
-    document.addEventListener('mouseup', this._documentListeners.mouseup = e => {
-      if (this._movable) {
-        e.preventDefault();
-      }
-      this._movable = false;
-    });
-    this.element.addEventListener('mousemove', this._listeners.mousemove = e => {
-      if (!this._movable) return;
-      this._moveInput(e);
-    });
-    this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
-      e.preventDefault();
-      this.setZoom(e.deltaY / 100);
-    });
-    this.element.addEventListener('dragstart', e => e.preventDefault());
-    document.addEventListener('keydown', this._documentListeners.keydown = e => {
-      switch (e.keyCode) {
-      case 39: // ➡
-        e.movementX = 1;
-        break;
-      case 37: // ⬅
-        e.movementX = -1;
-        break;
-      case 38: // ⬆
-        e.movementY = -1;
-        break;
-      case 40: // ⬇
-        e.movementY = 1;
-        break;
-      case 187: // +
-        return this.setZoom(0.1);
-      case 189: // -
-        return this.setZoom(-0.1);
-      default:
-        return;
-      }
-      this._moveInput(e);
-    });
-
-    // Touch
-    let previousPosition;
-    this.element.addEventListener('touchmove', this._listeners.touchmove = e => {
-      e.preventDefault();
-      const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
-      if (previousPosition) {
-        e.movementX = newPosition[0] - previousPosition[0];
-        e.movementY = newPosition[1] - previousPosition[1];
+    this._listeners = [
+      this.eventManager.addEventListener(this.element, 'mousedown', e => this._movable = true, true),
+      this.eventManager.addEventListener(document, 'mouseup', e => {
+        if (this._movable) {
+          e.preventDefault();
+        }
+        this._movable = false;
+      }, true),
+      this.eventManager.addEventListener(this.element, 'mousemove', e => {
+        if (!this._movable) return;
         this._moveInput(e);
-      }
-      previousPosition = newPosition;
-    });
-    this.element.addEventListener('touchend', this._listeners.touchend = e => previousPosition = null);
+      }),
+      this.eventManager.addEventListener(this.element, 'mousewheel', e => {
+        e.preventDefault();
+        this.setZoom(e.deltaY / 100);
+      }),
+      this.eventManager.addEventListener(this.element, 'dragstart', e => e.preventDefault()),
+      this.eventManager.addEventListener(document, 'keydown', e => {
+        switch (e.keyCode) {
+        case 39: // ➡
+          e.movementX = 1;
+          break;
+        case 37: // ⬅
+          e.movementX = -1;
+          break;
+        case 38: // ⬆
+          e.movementY = -1;
+          break;
+        case 40: // ⬇
+          e.movementY = 1;
+          break;
+        case 187: // +
+          return this.setZoom(0.1);
+        case 189: // -
+          return this.setZoom(-0.1);
+        default:
+          return;
+        }
+        this._moveInput(e);
+      }),
+      this.eventManager.addEventListener(this.element, 'touchmove', e => {
+        e.preventDefault();
+        const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
+        if (previousPosition) {
+          e.movementX = newPosition[0] - previousPosition[0];
+          e.movementY = newPosition[1] - previousPosition[1];
+          this._moveInput(e);
+        }
+        previousPosition = newPosition;
+      }),
+      this.eventManager.addEventListener(this.element, 'touchend', e => previousPosition = null)
+    ];
+
+    this._resizeCtnAsRatio();
   }
 
   detached() {
-    for (const event of Object.keys(this._listeners)) {
-      this.element.removeEventListener(event, this._listeners[event]);
-    }
-    for (const event of Object.keys(this._documentListeners)) {
-      document.removeEventListener(event, this._documentListeners[event]);
+    for (const off of this._listeners) {
+      off();
     }
   }
 
@@ -109,6 +106,13 @@ export class ImageResizerCustomElement {
     this._zoom(1);
     this.y = 0;
     this.x = 0;
+  }
+
+  widthChanged() {
+    this._resizeCtnAsRatio();
+  }
+  heightChanged() {
+    this._resizeCtnAsRatio();
   }
 
   zoomChanged(zoom) {
@@ -200,6 +204,10 @@ export class ImageResizerCustomElement {
       };
       img.src = this.input;
     }, 500);
+  }
+
+  _resizeCtnAsRatio() {
+    this.element.style.paddingTop = `${this.height / this.width * 100}%`;
   }
 
   setPinch(e) {

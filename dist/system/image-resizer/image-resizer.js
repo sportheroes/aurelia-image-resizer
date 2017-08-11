@@ -3,7 +3,7 @@
 System.register(['aurelia-framework'], function (_export, _context) {
   "use strict";
 
-  var inject, bindable, bindingMode, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, ImageResizerCustomElement;
+  var inject, bindable, bindingMode, EventManager, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, ImageResizerCustomElement;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -63,10 +63,11 @@ System.register(['aurelia-framework'], function (_export, _context) {
       inject = _aureliaFramework.inject;
       bindable = _aureliaFramework.bindable;
       bindingMode = _aureliaFramework.bindingMode;
+      EventManager = _aureliaFramework.EventManager;
     }],
     execute: function () {
-      _export('ImageResizerCustomElement', ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = function () {
-        function ImageResizerCustomElement(element) {
+      _export('ImageResizerCustomElement', ImageResizerCustomElement = (_dec = inject(Element, EventManager), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = function () {
+        function ImageResizerCustomElement(element, eventManager) {
           _classCallCheck(this, ImageResizerCustomElement);
 
           _initDefineProp(this, 'input', _descriptor, this);
@@ -96,6 +97,7 @@ System.register(['aurelia-framework'], function (_export, _context) {
           };
 
           this.element = element;
+          this.eventManager = eventManager;
           this.canvas = document.createElement('canvas');
         }
 
@@ -103,29 +105,22 @@ System.register(['aurelia-framework'], function (_export, _context) {
           var _this = this;
 
           this.supported = window.File && window.FileReader && window.FileList && window.Blob;
-          this._listeners = {};
-          this._documentListeners = {};
-          this.element.addEventListener('mousedown', this._listeners.mousedown = function (e) {
+          this._listeners = [this.eventManager.addEventListener(this.element, 'mousedown', function (e) {
             return _this._movable = true;
-          });
-          document.addEventListener('mouseup', this._documentListeners.mouseup = function (e) {
+          }, true), this.eventManager.addEventListener(document, 'mouseup', function (e) {
             if (_this._movable) {
               e.preventDefault();
             }
             _this._movable = false;
-          });
-          this.element.addEventListener('mousemove', this._listeners.mousemove = function (e) {
+          }, true), this.eventManager.addEventListener(this.element, 'mousemove', function (e) {
             if (!_this._movable) return;
             _this._moveInput(e);
-          });
-          this.element.addEventListener('mousewheel', this._listeners.mousewheel = function (e) {
+          }), this.eventManager.addEventListener(this.element, 'mousewheel', function (e) {
             e.preventDefault();
             _this.setZoom(e.deltaY / 100);
-          });
-          this.element.addEventListener('dragstart', function (e) {
+          }), this.eventManager.addEventListener(this.element, 'dragstart', function (e) {
             return e.preventDefault();
-          });
-          document.addEventListener('keydown', this._documentListeners.keydown = function (e) {
+          }), this.eventManager.addEventListener(document, 'keydown', function (e) {
             switch (e.keyCode) {
               case 39:
                 e.movementX = 1;
@@ -147,10 +142,7 @@ System.register(['aurelia-framework'], function (_export, _context) {
                 return;
             }
             _this._moveInput(e);
-          });
-
-          var previousPosition = void 0;
-          this.element.addEventListener('touchmove', this._listeners.touchmove = function (e) {
+          }), this.eventManager.addEventListener(this.element, 'touchmove', function (e) {
             e.preventDefault();
             var newPosition = [e.touches[0].screenX, e.touches[0].screenY];
             if (previousPosition) {
@@ -159,14 +151,15 @@ System.register(['aurelia-framework'], function (_export, _context) {
               _this._moveInput(e);
             }
             previousPosition = newPosition;
-          });
-          this.element.addEventListener('touchend', this._listeners.touchend = function (e) {
+          }), this.eventManager.addEventListener(this.element, 'touchend', function (e) {
             return previousPosition = null;
-          });
+          })];
+
+          this._resizeCtnAsRatio();
         };
 
         ImageResizerCustomElement.prototype.detached = function detached() {
-          for (var _iterator = Object.keys(this._listeners), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+          for (var _iterator = this._listeners, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
             var _ref;
 
             if (_isArray) {
@@ -178,25 +171,9 @@ System.register(['aurelia-framework'], function (_export, _context) {
               _ref = _i.value;
             }
 
-            var event = _ref;
+            var off = _ref;
 
-            this.element.removeEventListener(event, this._listeners[event]);
-          }
-          for (var _iterator2 = Object.keys(this._documentListeners), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-            var _ref2;
-
-            if (_isArray2) {
-              if (_i2 >= _iterator2.length) break;
-              _ref2 = _iterator2[_i2++];
-            } else {
-              _i2 = _iterator2.next();
-              if (_i2.done) break;
-              _ref2 = _i2.value;
-            }
-
-            var _event = _ref2;
-
-            document.removeEventListener(_event, this._documentListeners[_event]);
+            off();
           }
         };
 
@@ -208,6 +185,14 @@ System.register(['aurelia-framework'], function (_export, _context) {
           this._zoom(1);
           this.y = 0;
           this.x = 0;
+        };
+
+        ImageResizerCustomElement.prototype.widthChanged = function widthChanged() {
+          this._resizeCtnAsRatio();
+        };
+
+        ImageResizerCustomElement.prototype.heightChanged = function heightChanged() {
+          this._resizeCtnAsRatio();
         };
 
         ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
@@ -310,6 +295,10 @@ System.register(['aurelia-framework'], function (_export, _context) {
             };
             img.src = _this4.input;
           }, 500);
+        };
+
+        ImageResizerCustomElement.prototype._resizeCtnAsRatio = function _resizeCtnAsRatio() {
+          this.element.style.paddingTop = this.height / this.width * 100 + '%';
         };
 
         ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {

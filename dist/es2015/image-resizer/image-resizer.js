@@ -43,15 +43,15 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
-import { inject, bindable, bindingMode } from 'aurelia-framework';
+import { inject, bindable, bindingMode, EventManager } from 'aurelia-framework';
 
 function ratio(w, h) {
   return w / h;
 }
 
-export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = class ImageResizerCustomElement {
+export let ImageResizerCustomElement = (_dec = inject(Element, EventManager), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = class ImageResizerCustomElement {
 
-  constructor(element) {
+  constructor(element, eventManager) {
     _initDefineProp(this, 'input', _descriptor, this);
 
     _initDefineProp(this, 'output', _descriptor2, this);
@@ -79,30 +79,24 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
     };
 
     this.element = element;
+    this.eventManager = eventManager;
     this.canvas = document.createElement('canvas');
   }
 
   attached() {
     this.supported = window.File && window.FileReader && window.FileList && window.Blob;
-    this._listeners = {};
-    this._documentListeners = {};
-    this.element.addEventListener('mousedown', this._listeners.mousedown = e => this._movable = true);
-    document.addEventListener('mouseup', this._documentListeners.mouseup = e => {
+    this._listeners = [this.eventManager.addEventListener(this.element, 'mousedown', e => this._movable = true, true), this.eventManager.addEventListener(document, 'mouseup', e => {
       if (this._movable) {
         e.preventDefault();
       }
       this._movable = false;
-    });
-    this.element.addEventListener('mousemove', this._listeners.mousemove = e => {
+    }, true), this.eventManager.addEventListener(this.element, 'mousemove', e => {
       if (!this._movable) return;
       this._moveInput(e);
-    });
-    this.element.addEventListener('mousewheel', this._listeners.mousewheel = e => {
+    }), this.eventManager.addEventListener(this.element, 'mousewheel', e => {
       e.preventDefault();
       this.setZoom(e.deltaY / 100);
-    });
-    this.element.addEventListener('dragstart', e => e.preventDefault());
-    document.addEventListener('keydown', this._documentListeners.keydown = e => {
+    }), this.eventManager.addEventListener(this.element, 'dragstart', e => e.preventDefault()), this.eventManager.addEventListener(document, 'keydown', e => {
       switch (e.keyCode) {
         case 39:
           e.movementX = 1;
@@ -124,10 +118,7 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
           return;
       }
       this._moveInput(e);
-    });
-
-    let previousPosition;
-    this.element.addEventListener('touchmove', this._listeners.touchmove = e => {
+    }), this.eventManager.addEventListener(this.element, 'touchmove', e => {
       e.preventDefault();
       const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
       if (previousPosition) {
@@ -136,16 +127,14 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
         this._moveInput(e);
       }
       previousPosition = newPosition;
-    });
-    this.element.addEventListener('touchend', this._listeners.touchend = e => previousPosition = null);
+    }), this.eventManager.addEventListener(this.element, 'touchend', e => previousPosition = null)];
+
+    this._resizeCtnAsRatio();
   }
 
   detached() {
-    for (const event of Object.keys(this._listeners)) {
-      this.element.removeEventListener(event, this._listeners[event]);
-    }
-    for (const event of Object.keys(this._documentListeners)) {
-      document.removeEventListener(event, this._documentListeners[event]);
+    for (const off of this._listeners) {
+      off();
     }
   }
 
@@ -157,6 +146,13 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
     this._zoom(1);
     this.y = 0;
     this.x = 0;
+  }
+
+  widthChanged() {
+    this._resizeCtnAsRatio();
+  }
+  heightChanged() {
+    this._resizeCtnAsRatio();
   }
 
   zoomChanged(zoom) {
@@ -245,6 +241,10 @@ export let ImageResizerCustomElement = (_dec = inject(Element), _dec2 = bindable
       };
       img.src = this.input;
     }, 500);
+  }
+
+  _resizeCtnAsRatio() {
+    this.element.style.paddingTop = `${this.height / this.width * 100}%`;
   }
 
   setPinch(e) {
