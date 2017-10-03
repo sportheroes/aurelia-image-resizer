@@ -1,42 +1,62 @@
-export let PinchCustomAttribute = class PinchCustomAttribute {
-  attached() {
-    let previousDistance;
-    document.body.addEventListener('touchstart', this._touchstart = e => {
+'use strict';
+
+exports.__esModule = true;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PinchCustomAttribute = exports.PinchCustomAttribute = function () {
+  function PinchCustomAttribute() {
+    _classCallCheck(this, PinchCustomAttribute);
+  }
+
+  PinchCustomAttribute.prototype.attached = function attached() {
+    var _this = this;
+
+    var previousDistance = void 0;
+    document.body.addEventListener('touchstart', this._touchstart = function (e) {
       previousDistance = 0;
     }, false);
-    document.body.addEventListener('touchmove', this._touchmove = e => {
+    document.body.addEventListener('touchmove', this._touchmove = function (e) {
       if (e.targetTouches.length > 1) {
         e.preventDefault();
-        const end = this._readTouches(e.targetTouches);
-        const endDistance = this._distance({ ax: end[1].x, ay: end[1].y }, { bx: end[0].x, by: end[0].y });
+        var end = _this._readTouches(e.targetTouches);
+        var endDistance = _this._distance({ ax: end[1].x, ay: end[1].y }, { bx: end[0].x, by: end[0].y });
         if (previousDistance) {
           if (endDistance > previousDistance) {
-            this.value({ pinch: 1 });
+            _this.value({ pinch: 1 });
           } else {
-            this.value({ pinch: -1 });
+            _this.value({ pinch: -1 });
           }
         }
         previousDistance = endDistance;
       }
     }, false);
-  }
-  detached() {
+  };
+
+  PinchCustomAttribute.prototype.detached = function detached() {
     document.body.removeEventListener('touchmove', this._touchmove);
     document.body.removeEventListener('touchstart', this._touchstart);
-  }
+  };
 
-  _distance({ ax, ay }, { bx, by }) {
+  PinchCustomAttribute.prototype._distance = function _distance(_ref, _ref2) {
+    var ax = _ref.ax,
+        ay = _ref.ay;
+    var bx = _ref2.bx,
+        by = _ref2.by;
+
     return Math.sqrt(Math.pow(bx - ax, 2) + Math.pow(by - ay, 2));
-  }
+  };
 
-  _readTouches(touches) {
-    const touchesPositions = [];
-    for (const k in Array.from(touches)) {
+  PinchCustomAttribute.prototype._readTouches = function _readTouches(touches) {
+    var touchesPositions = [];
+    for (var k in Array.from(touches)) {
       touchesPositions.push({
         x: touches[k].screenX,
         y: touches[k].screenY
       });
     }
     return touchesPositions;
-  }
-};
+  };
+
+  return PinchCustomAttribute;
+}();
