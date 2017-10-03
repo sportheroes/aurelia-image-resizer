@@ -107,8 +107,19 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
           e.preventDefault();
         }
         _this._movable = false;
+        delete _this._ieLastCoord;
       }, true), this.eventManager.addEventListener(this.element, 'mousemove', function (e) {
         if (!_this._movable) return;
+        if (e.movementX === undefined) {
+          if (_this._ieLastCoord) {
+            e.movementX = e.screenX - _this._ieLastCoord.x;
+            e.movementY = e.screenY - _this._ieLastCoord.y;
+          }
+          _this._ieLastCoord = {
+            x: e.screenX,
+            y: e.screenY
+          };
+        }
         _this._moveInput(e);
       }), this.eventManager.addEventListener(this.element, 'mousewheel', function (e) {
         e.preventDefault();
@@ -281,8 +292,8 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
             return dim / _this4.currentZoom;
           });
 
-          var x = _this4.x * img.width / _this4.img.width;
-          var y = _this4.y * img.height / _this4.img.height;
+          var x = parseInt(_this4.x * img.width / _this4.img.width, 10);
+          var y = parseInt(_this4.y * img.height / _this4.img.height, 10);
 
           ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
 

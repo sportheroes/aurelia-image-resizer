@@ -43,9 +43,20 @@ export class ImageResizerCustomElement {
           e.preventDefault();
         }
         this._movable = false;
+        delete this._ieLastCoord;
       }, true),
       this.eventManager.addEventListener(this.element, 'mousemove', e => {
         if (!this._movable) return;
+        if (e.movementX === undefined) {
+          if (this._ieLastCoord) {
+            e.movementX = e.screenX - this._ieLastCoord.x;
+            e.movementY = e.screenY - this._ieLastCoord.y;
+          }
+          this._ieLastCoord = {
+            x: e.screenX,
+            y: e.screenY
+          };
+        }
         this._moveInput(e);
       }),
       this.eventManager.addEventListener(this.element, 'mousewheel', e => {
@@ -192,8 +203,8 @@ export class ImageResizerCustomElement {
 
         resized = resized.map(dim => dim / this.currentZoom);
 
-        const x = this.x * img.width / this.img.width;
-        const y = this.y * img.height / this.img.height;
+        const x = parseInt(this.x * img.width / this.img.width, 10);
+        const y = parseInt(this.y * img.height / this.img.height, 10);
 
         ctx.drawImage(
           img,
