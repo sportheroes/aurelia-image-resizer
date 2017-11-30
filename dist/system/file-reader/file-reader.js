@@ -3,7 +3,7 @@
 System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
   "use strict";
 
-  var bindable, bindingMode, EXIF, _dec, _desc, _value, _class, _descriptor, FileReaderCustomElement;
+  var bindable, bindingMode, EXIF, _dec, _dec2, _desc, _value, _class, _descriptor, _descriptor2, FileReaderCustomElement;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -62,11 +62,13 @@ System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
       EXIF = _exifJs.default;
     }],
     execute: function () {
-      _export('FileReaderCustomElement', FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bindingMode.twoWay }), (_class = function () {
+      _export('FileReaderCustomElement', FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), (_class = function () {
         function FileReaderCustomElement() {
           _classCallCheck(this, FileReaderCustomElement);
 
           _initDefineProp(this, 'file', _descriptor, this);
+
+          _initDefineProp(this, 'exif', _descriptor2, this);
         }
 
         FileReaderCustomElement.prototype.update = function update(e) {
@@ -127,8 +129,8 @@ System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
         };
 
         FileReaderCustomElement.prototype._readOrientationFromExif = function _readOrientationFromExif(fileAsBinary) {
-          var exif = EXIF.readFromBinaryFile(fileAsBinary);
-          return exif && exif.Orientation || 0;
+          this.exif = EXIF.readFromBinaryFile(fileAsBinary);
+          return this.exif && this.exif.Orientation || 0;
         };
 
         FileReaderCustomElement.prototype._rotate = function _rotate(fileAsUrl, degrees) {
@@ -156,6 +158,9 @@ System.register(['aurelia-framework', 'exif-js'], function (_export, _context) {
 
         return FileReaderCustomElement;
       }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'file', [_dec], {
+        enumerable: true,
+        initializer: null
+      }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'exif', [_dec2], {
         enumerable: true,
         initializer: null
       })), _class)));

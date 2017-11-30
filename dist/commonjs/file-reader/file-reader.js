@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.FileReaderCustomElement = undefined;
 
-var _dec, _desc, _value, _class, _descriptor;
+var _dec, _dec2, _desc, _value, _class, _descriptor, _descriptor2;
 
 var _aureliaFramework = require('aurelia-framework');
 
@@ -60,11 +60,13 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
-var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), (_class = function () {
+var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), _dec2 = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), (_class = function () {
   function FileReaderCustomElement() {
     _classCallCheck(this, FileReaderCustomElement);
 
     _initDefineProp(this, 'file', _descriptor, this);
+
+    _initDefineProp(this, 'exif', _descriptor2, this);
   }
 
   FileReaderCustomElement.prototype.update = function update(e) {
@@ -125,8 +127,8 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
   };
 
   FileReaderCustomElement.prototype._readOrientationFromExif = function _readOrientationFromExif(fileAsBinary) {
-    var exif = _exifJs2.default.readFromBinaryFile(fileAsBinary);
-    return exif && exif.Orientation || 0;
+    this.exif = _exifJs2.default.readFromBinaryFile(fileAsBinary);
+    return this.exif && this.exif.Orientation || 0;
   };
 
   FileReaderCustomElement.prototype._rotate = function _rotate(fileAsUrl, degrees) {
@@ -154,6 +156,9 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
 
   return FileReaderCustomElement;
 }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'file', [_dec], {
+  enumerable: true,
+  initializer: null
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'exif', [_dec2], {
   enumerable: true,
   initializer: null
 })), _class));

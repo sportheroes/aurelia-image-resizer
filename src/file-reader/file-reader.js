@@ -3,6 +3,7 @@ import EXIF from 'exif-js';
 
 export class FileReaderCustomElement {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) file;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) exif;
 
   update(e) {
     const file = e.target.files && e.target.files[0];
@@ -63,8 +64,8 @@ export class FileReaderCustomElement {
   }
 
   _readOrientationFromExif(fileAsBinary) {
-    const exif = EXIF.readFromBinaryFile(fileAsBinary);
-    return exif && exif.Orientation || 0;
+    this.exif = EXIF.readFromBinaryFile(fileAsBinary);
+    return this.exif && this.exif.Orientation || 0;
   }
 
   _rotate(fileAsUrl, degrees) {
