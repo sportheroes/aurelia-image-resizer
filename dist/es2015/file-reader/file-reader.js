@@ -50,7 +50,7 @@ export let FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bind
   constructor() {
     _initDefineProp(this, 'file', _descriptor, this);
 
-    _initDefineProp(this, 'exif', _descriptor2, this);
+    _initDefineProp(this, 'infos', _descriptor2, this);
   }
 
   update(e) {
@@ -67,11 +67,10 @@ export let FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bind
     let fileAsUrl;
     return this._readFileAsUrl(file).then(data => {
       fileAsUrl = data;
-      return this._readFileAsBinary(file);
-    }).then(fileAsBinary => {
-      return this._readOrientationFromExif(fileAsBinary);
-    }).then(orientation => {
-      switch (orientation) {
+      return this._readInfos(file, fileAsUrl);
+    }).then(infos => {
+      this.infos = infos;
+      switch (this.infos.exif.Orientation) {
         case 7:
         case 8:
           return this._rotate(fileAsUrl, -90);
@@ -106,9 +105,26 @@ export let FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bind
     });
   }
 
-  _readOrientationFromExif(fileAsBinary) {
-    this.exif = EXIF.readFromBinaryFile(fileAsBinary);
-    return this.exif && this.exif.Orientation || 0;
+  _readInfos(file, fileAsUrl) {
+    const infos = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    };
+    const img = new Image();
+    img.src = fileAsUrl;
+    return Promise.all([this._readFileAsBinary(file).then(fileAsBinary => {
+      infos.exif = EXIF.readFromBinaryFile(fileAsBinary) || {};
+      infos.exif.Orientation = infos.exif.Orientation || 0;
+    }), new Promise((resolve, reject) => {
+      img.onload = () => {
+        infos.width = img.width;
+        infos.height = img.height;
+        resolve(infos);
+      };
+      img.onerror = e => resolve(infos);
+    })]).then(() => infos);
   }
 
   _rotate(fileAsUrl, degrees) {
@@ -136,7 +152,7 @@ export let FileReaderCustomElement = (_dec = bindable({ defaultBindingMode: bind
 }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'file', [_dec], {
   enumerable: true,
   initializer: null
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'exif', [_dec2], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'infos', [_dec2], {
   enumerable: true,
   initializer: null
 })), _class));

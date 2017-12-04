@@ -66,7 +66,7 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
 
     _initDefineProp(this, 'file', _descriptor, this);
 
-    _initDefineProp(this, 'exif', _descriptor2, this);
+    _initDefineProp(this, 'infos', _descriptor2, this);
   }
 
   FileReaderCustomElement.prototype.update = function update(e) {
@@ -87,11 +87,10 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
     var fileAsUrl = void 0;
     return this._readFileAsUrl(file).then(function (data) {
       fileAsUrl = data;
-      return _this2._readFileAsBinary(file);
-    }).then(function (fileAsBinary) {
-      return _this2._readOrientationFromExif(fileAsBinary);
-    }).then(function (orientation) {
-      switch (orientation) {
+      return _this2._readInfos(file, fileAsUrl);
+    }).then(function (infos) {
+      _this2.infos = infos;
+      switch (_this2.infos.exif.Orientation) {
         case 7:
         case 8:
           return _this2._rotate(fileAsUrl, -90);
@@ -126,9 +125,30 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
     });
   };
 
-  FileReaderCustomElement.prototype._readOrientationFromExif = function _readOrientationFromExif(fileAsBinary) {
-    this.exif = _exifJs2.default.readFromBinaryFile(fileAsBinary);
-    return this.exif && this.exif.Orientation || 0;
+  FileReaderCustomElement.prototype._readInfos = function _readInfos(file, fileAsUrl) {
+    var infos = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    };
+    var img = new Image();
+    img.src = fileAsUrl;
+    return Promise.all([this._readFileAsBinary(file).then(function (fileAsBinary) {
+      infos.exif = _exifJs2.default.readFromBinaryFile(fileAsBinary) || {};
+      infos.exif.Orientation = infos.exif.Orientation || 0;
+    }), new Promise(function (resolve, reject) {
+      img.onload = function () {
+        infos.width = img.width;
+        infos.height = img.height;
+        resolve(infos);
+      };
+      img.onerror = function (e) {
+        return resolve(infos);
+      };
+    })]).then(function () {
+      return infos;
+    });
   };
 
   FileReaderCustomElement.prototype._rotate = function _rotate(fileAsUrl, degrees) {
@@ -158,7 +178,7 @@ var FileReaderCustomElement = exports.FileReaderCustomElement = (_dec = (0, _aur
 }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'file', [_dec], {
   enumerable: true,
   initializer: null
-}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'exif', [_dec2], {
+}), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, 'infos', [_dec2], {
   enumerable: true,
   initializer: null
 })), _class));
