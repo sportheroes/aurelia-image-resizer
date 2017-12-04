@@ -3,6 +3,7 @@ import EXIF from 'exif-js';
 
 export class FileReaderCustomElement {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) file;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) infos;
 
   update(e) {
     const file = e.target.files && e.target.files[0];
@@ -21,13 +22,11 @@ export class FileReaderCustomElement {
     return this._readFileAsUrl(file)
     .then(data => {
       fileAsUrl = data;
-      return this._readFileAsBinary(file);
+      return this._readInfos(file, fileAsUrl);
     })
-    .then(fileAsBinary => {
-      return this._readOrientationFromExif(fileAsBinary);
-    })
-    .then(orientation => {
-      switch (orientation) {
+    .then(infos => {
+      this.infos = infos;
+      switch (this.infos.exif.Orientation) {
       case 7:
       case 8:
         return this._rotate(fileAsUrl, -90);
@@ -62,9 +61,31 @@ export class FileReaderCustomElement {
     });
   }
 
-  _readOrientationFromExif(fileAsBinary) {
-    const exif = EXIF.readFromBinaryFile(fileAsBinary);
-    return exif && exif.Orientation || 0;
+  _readInfos(file, fileAsUrl) {
+    const infos = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    };
+    const img = new Image();
+    img.src = fileAsUrl;
+    return Promise.all([
+      this._readFileAsBinary(file)
+      .then(fileAsBinary => {
+        infos.exif = EXIF.readFromBinaryFile(fileAsBinary) || {};
+        infos.exif.Orientation = infos.exif.Orientation || 0;
+      }),
+      new Promise((resolve, reject) => {
+        img.onload = () => {
+          infos.width = img.width;
+          infos.height = img.height;
+          resolve(infos);
+        }
+        img.onerror = e => resolve(infos);
+      })
+    ])
+    .then(() => infos);
   }
 
   _rotate(fileAsUrl, degrees) {

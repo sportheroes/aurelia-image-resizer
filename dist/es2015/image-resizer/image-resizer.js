@@ -1,11 +1,4 @@
-'use strict';
-
-exports.__esModule = true;
-exports.ImageResizerCustomElement = undefined;
-
 var _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7;
-
-var _aureliaFramework = require('aurelia-framework');
 
 function _initDefineProp(target, property, descriptor, context) {
   if (!descriptor) return;
@@ -16,8 +9,6 @@ function _initDefineProp(target, property, descriptor, context) {
     value: descriptor.initializer ? descriptor.initializer.call(context) : void 0
   });
 }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) {
   var desc = {};
@@ -52,14 +43,15 @@ function _initializerWarningHelper(descriptor, context) {
   throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
 }
 
+import { inject, bindable, bindingMode, EventManager } from 'aurelia-framework';
+
 function ratio(w, h) {
   return w / h;
 }
 
-var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, _aureliaFramework.inject)(Element, _aureliaFramework.EventManager), _dec2 = (0, _aureliaFramework.bindable)({ defaultBindingMode: _aureliaFramework.bindingMode.twoWay }), _dec(_class = (_class2 = function () {
-  function ImageResizerCustomElement(element, eventManager) {
-    _classCallCheck(this, ImageResizerCustomElement);
+export let ImageResizerCustomElement = (_dec = inject(Element, EventManager), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = class ImageResizerCustomElement {
 
+  constructor(element, eventManager) {
     _initDefineProp(this, 'input', _descriptor, this);
 
     _initDefineProp(this, 'output', _descriptor2, this);
@@ -91,37 +83,31 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
     this.canvas = document.createElement('canvas');
   }
 
-  ImageResizerCustomElement.prototype.attached = function attached() {
-    var _this = this;
-
+  attached() {
     this.supported = window.File && window.FileReader && window.FileList && window.Blob;
-    this._listeners = [this.eventManager.addEventListener(this.element, 'mousedown', function (e) {
-      return _this._movable = true;
-    }, true), this.eventManager.addEventListener(document, 'mouseup', function (e) {
-      if (_this._movable) {
+    this._listeners = [this.eventManager.addEventListener(this.element, 'mousedown', e => this._movable = true, true), this.eventManager.addEventListener(document, 'mouseup', e => {
+      if (this._movable) {
         e.preventDefault();
       }
-      _this._movable = false;
-      delete _this._ieLastCoord;
-    }, true), this.eventManager.addEventListener(this.element, 'mousemove', function (e) {
-      if (!_this._movable) return;
+      this._movable = false;
+      delete this._ieLastCoord;
+    }, true), this.eventManager.addEventListener(this.element, 'mousemove', e => {
+      if (!this._movable) return;
       if (e.movementX === undefined) {
-        if (_this._ieLastCoord) {
-          e.movementX = e.screenX - _this._ieLastCoord.x;
-          e.movementY = e.screenY - _this._ieLastCoord.y;
+        if (this._ieLastCoord) {
+          e.movementX = e.screenX - this._ieLastCoord.x;
+          e.movementY = e.screenY - this._ieLastCoord.y;
         }
-        _this._ieLastCoord = {
+        this._ieLastCoord = {
           x: e.screenX,
           y: e.screenY
         };
       }
-      _this._moveInput(e);
-    }), this.eventManager.addEventListener(this.element, 'mousewheel', function (e) {
+      this._moveInput(e);
+    }), this.eventManager.addEventListener(this.element, 'mousewheel', e => {
       e.preventDefault();
-      _this.setZoom(e.deltaY / 100);
-    }), this.eventManager.addEventListener(this.element, 'dragstart', function (e) {
-      return e.preventDefault();
-    }), this.eventManager.addEventListener(document, 'keydown', function (e) {
+      this.setZoom(e.deltaY / 100);
+    }), this.eventManager.addEventListener(this.element, 'dragstart', e => e.preventDefault()), this.eventManager.addEventListener(document, 'keydown', e => {
       switch (e.keyCode) {
         case 39:
           e.movementX = 1;
@@ -136,115 +122,89 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
           e.movementY = 1;
           break;
         case 187:
-          return _this.setZoom(0.1);
+          return this.setZoom(0.1);
         case 189:
-          return _this.setZoom(-0.1);
+          return this.setZoom(-0.1);
         default:
           return;
       }
-      _this._moveInput(e);
-    }), this.eventManager.addEventListener(this.element, 'touchmove', function (e) {
+      this._moveInput(e);
+    }), this.eventManager.addEventListener(this.element, 'touchmove', e => {
       e.preventDefault();
-      var newPosition = [e.touches[0].screenX, e.touches[0].screenY];
+      const newPosition = [e.touches[0].screenX, e.touches[0].screenY];
       if (previousPosition) {
         e.movementX = newPosition[0] - previousPosition[0];
         e.movementY = newPosition[1] - previousPosition[1];
-        _this._moveInput(e);
+        this._moveInput(e);
       }
       previousPosition = newPosition;
-    }), this.eventManager.addEventListener(this.element, 'touchend', function (e) {
-      return previousPosition = null;
-    })];
+    }), this.eventManager.addEventListener(this.element, 'touchend', e => previousPosition = null)];
 
     this._resizeCtnAsRatio();
-  };
+  }
 
-  ImageResizerCustomElement.prototype.detached = function detached() {
-    for (var _iterator = this._listeners, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        _i = _iterator.next();
-        if (_i.done) break;
-        _ref = _i.value;
-      }
-
-      var off = _ref;
-
+  detached() {
+    for (const off of this._listeners) {
       off();
     }
-  };
+  }
 
-  ImageResizerCustomElement.prototype.loaded = function loaded() {
+  loaded() {
     if (!this.img) return;
-    var box = this.img.getBoundingClientRect();
+    const box = this.img.getBoundingClientRect();
     this.imgDims.width = box.width;
     this.imgDims.height = box.height;
     this._zoom(1);
     this.y = 0;
     this.x = 0;
-  };
+  }
 
-  ImageResizerCustomElement.prototype.widthChanged = function widthChanged() {
+  widthChanged() {
     this._resizeCtnAsRatio();
-  };
-
-  ImageResizerCustomElement.prototype.heightChanged = function heightChanged() {
+  }
+  heightChanged() {
     this._resizeCtnAsRatio();
-  };
+  }
 
-  ImageResizerCustomElement.prototype.zoomChanged = function zoomChanged(zoom) {
+  zoomChanged(zoom) {
     if (!this.img) return;
     this._zoom(zoom);
-  };
+  }
 
-  ImageResizerCustomElement.prototype.setZoom = function setZoom(change) {
+  setZoom(change) {
     this.zoom = this.currentZoom + change;
-  };
+  }
 
-  ImageResizerCustomElement.prototype._zoom = function _zoom() {
-    var _this2 = this;
-
-    var zoom = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
+  _zoom(zoom = 1) {
     this.currentZoom = +zoom;
     zoom = Math.min(100, Math.max(1, this.currentZoom));
-    var box = this.element.getBoundingClientRect();
-    var elWidth = box.width;
-    var elHeight = box.height;
+    const box = this.element.getBoundingClientRect();
+    const elWidth = box.width;
+    const elHeight = box.height;
 
     if (this.imgDims.ratio > 1) {
-      this.img.style.height = elHeight * zoom + 'px';
+      this.img.style.height = `${elHeight * zoom}px`;
       this.img.style.width = 'auto';
     } else {
-      this.img.style.width = elWidth * zoom + 'px';
+      this.img.style.width = `${elWidth * zoom}px`;
       this.img.style.height = 'auto';
     }
-    setTimeout(function () {
-      return _this2._constrain();
-    });
-  };
+    setTimeout(() => this._constrain());
+  }
 
-  ImageResizerCustomElement.prototype._moveInput = function _moveInput(e) {
-    var _this3 = this;
-
+  _moveInput(e) {
     e.preventDefault();
-    var newY = this.y + (e.movementY || 0);
-    var newX = this.x + (e.movementX || 0);
+    const newY = this.y + (e.movementY || 0);
+    const newX = this.x + (e.movementX || 0);
 
     this.x = newX;
     this.y = newY;
-    setTimeout(function () {
-      return _this3._constrain();
-    });
-  };
+    setTimeout(() => this._constrain());
+  }
 
-  ImageResizerCustomElement.prototype._constrain = function _constrain() {
-    var box = this.element.getBoundingClientRect();
-    var imgDims = this.img.getBoundingClientRect();
+  _constrain() {
+    const box = this.element.getBoundingClientRect();
+    const imgDims = this.img.getBoundingClientRect();
 
     if (this.x > 0) {
       this.x = 0;
@@ -260,78 +220,72 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
     }
 
     this._resizeCanvas();
-  };
+  }
 
-  ImageResizerCustomElement.prototype._resizeCanvas = function _resizeCanvas() {
-    var _this4 = this;
-
+  _resizeCanvas() {
     if (this._debouncedResizeCanvasTimeout) {
       clearTimeout(this._debouncedResizeCanvasTimeout);
     }
-    this._debouncedResizeCanvasTimeout = setTimeout(function () {
-      var ctx = _this4.canvas.getContext('2d');
-      _this4.canvas.width = _this4.width;
-      _this4.canvas.height = _this4.height;
+    this._debouncedResizeCanvasTimeout = setTimeout(() => {
+      const ctx = this.canvas.getContext('2d');
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
 
-      var img = new Image();
-      img.onload = function () {
-        var imgDim = Math.min(img.width, img.height);
-        var r = _this4.canvas.height / _this4.canvas.width;
-        var resized = [imgDim, imgDim * r];
-        if (_this4.canvas.height > _this4.canvas.width) {
-          r = _this4.canvas.width / _this4.canvas.height;
+      const img = new Image();
+      img.onload = () => {
+        const imgDim = Math.min(img.width, img.height);
+        let r = this.canvas.height / this.canvas.width;
+        let resized = [imgDim, imgDim * r];
+        if (this.canvas.height > this.canvas.width) {
+          r = this.canvas.width / this.canvas.height;
           resized = [imgDim * r, imgDim];
         }
 
-        resized = resized.map(function (dim) {
-          return dim / _this4.currentZoom;
-        });
+        resized = resized.map(dim => dim / this.currentZoom);
 
-        var x = parseInt(_this4.x * img.width / _this4.img.width, 10);
-        var y = parseInt(_this4.y * img.height / _this4.img.height, 10);
+        const x = parseInt(this.x * img.width / this.img.width, 10);
+        const y = parseInt(this.y * img.height / this.img.height, 10);
 
-        ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
+        ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, this.canvas.width, this.canvas.height);
 
-        _this4.output = _this4.canvas.toDataURL(_this4.type, _this4.encoderOptions);
+        this.output = this.canvas.toDataURL(this.type, this.encoderOptions);
       };
-      img.src = _this4.input;
+      img.src = this.input;
     }, 500);
-  };
+  }
 
-  ImageResizerCustomElement.prototype._resizeCtnAsRatio = function _resizeCtnAsRatio() {
-    this.element.style.paddingTop = this.height / this.width * 100 + '%';
-  };
+  _resizeCtnAsRatio() {
+    this.element.style.paddingTop = `${this.height / this.width * 100}%`;
+  }
 
-  ImageResizerCustomElement.prototype.setPinch = function setPinch(e) {
+  setPinch(e) {
     this.setZoom(e.pinch / 10);
-  };
-
-  return ImageResizerCustomElement;
-}(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'input', [_aureliaFramework.bindable], {
+  }
+}, (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'input', [bindable], {
   enumerable: true,
   initializer: null
 }), _descriptor2 = _applyDecoratedDescriptor(_class2.prototype, 'output', [_dec2], {
   enumerable: true,
   initializer: null
-}), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'width', [_aureliaFramework.bindable], {
+}), _descriptor3 = _applyDecoratedDescriptor(_class2.prototype, 'width', [bindable], {
   enumerable: true,
-  initializer: function initializer() {
+  initializer: function () {
     return 100;
   }
-}), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'height', [_aureliaFramework.bindable], {
+}), _descriptor4 = _applyDecoratedDescriptor(_class2.prototype, 'height', [bindable], {
   enumerable: true,
-  initializer: function initializer() {
+  initializer: function () {
     return 100;
   }
-}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'zoom', [_aureliaFramework.bindable], {
+}), _descriptor5 = _applyDecoratedDescriptor(_class2.prototype, 'zoom', [bindable], {
   enumerable: true,
-  initializer: function initializer() {
+  initializer: function () {
     return 1;
   }
-}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'type', [_aureliaFramework.bindable], {
+}), _descriptor6 = _applyDecoratedDescriptor(_class2.prototype, 'type', [bindable], {
   enumerable: true,
   initializer: null
-}), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [_aureliaFramework.bindable], {
+}), _descriptor7 = _applyDecoratedDescriptor(_class2.prototype, 'encoderOptions', [bindable], {
   enumerable: true,
   initializer: null
 })), _class2)) || _class);
