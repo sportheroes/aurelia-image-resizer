@@ -6,6 +6,12 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
   });
   exports.ImageResizerCustomElement = undefined;
 
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  };
+
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
     Object.defineProperty(target, property, {
@@ -297,7 +303,9 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
 
           ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
 
-          _this4.output = _this4.canvas.toDataURL(_this4.type, _this4.encoderOptions);
+          var encoderOptions = ['string', 'number'].includes(_typeof(_this4.encoderOptions)) ? Number(_this4.encoderOptions) : null;
+
+          _this4.output = _this4.canvas.toDataURL(_this4.type, encoderOptions);
         };
         img.src = _this4.input;
       }, 500);
