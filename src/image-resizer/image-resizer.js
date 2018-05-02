@@ -211,7 +211,11 @@ export class ImageResizerCustomElement {
           -x, -y, resized[0], resized[1],
           0, 0, this.canvas.width, this.canvas.height);
 
-        this.output = this.canvas.toDataURL(this.type, this.encoderOptions);
+        const encoderOptions = ['string', 'number'].includes(typeof this.encoderOptions)
+          ? Number(this.encoderOptions)
+          : null;
+
+        this.output = this.canvas.toDataURL(this.type, encoderOptions);
       };
       img.src = this.input;
     }, 500);

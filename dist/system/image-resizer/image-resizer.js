@@ -3,7 +3,7 @@
 System.register(['aurelia-framework'], function (_export, _context) {
   "use strict";
 
-  var inject, bindable, bindingMode, EventManager, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, ImageResizerCustomElement;
+  var inject, bindable, bindingMode, EventManager, _typeof, _dec, _dec2, _class, _desc, _value, _class2, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6, _descriptor7, ImageResizerCustomElement;
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -66,6 +66,12 @@ System.register(['aurelia-framework'], function (_export, _context) {
       EventManager = _aureliaFramework.EventManager;
     }],
     execute: function () {
+      _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+      } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      };
+
       _export('ImageResizerCustomElement', ImageResizerCustomElement = (_dec = inject(Element, EventManager), _dec2 = bindable({ defaultBindingMode: bindingMode.twoWay }), _dec(_class = (_class2 = function () {
         function ImageResizerCustomElement(element, eventManager) {
           _classCallCheck(this, ImageResizerCustomElement);
@@ -302,7 +308,9 @@ System.register(['aurelia-framework'], function (_export, _context) {
 
               ctx.drawImage(img, -x, -y, resized[0], resized[1], 0, 0, _this4.canvas.width, _this4.canvas.height);
 
-              _this4.output = _this4.canvas.toDataURL(_this4.type, _this4.encoderOptions);
+              var encoderOptions = ['string', 'number'].includes(_typeof(_this4.encoderOptions)) ? Number(_this4.encoderOptions) : null;
+
+              _this4.output = _this4.canvas.toDataURL(_this4.type, encoderOptions);
             };
             img.src = _this4.input;
           }, 500);
