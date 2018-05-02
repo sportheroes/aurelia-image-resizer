@@ -1,6 +1,6 @@
 {
   "name": "aurelia-image-resizer",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Aurelia component to load and resize an image",
   "keywords": [
     "aurelia",
