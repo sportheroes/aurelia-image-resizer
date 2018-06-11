@@ -193,7 +193,6 @@ export let ImageResizerCustomElement = (_dec = inject(Element, EventManager), _d
   }
 
   _moveInput(e) {
-    e.preventDefault();
     const newY = this.y + (e.movementY || 0);
     const newX = this.x + (e.movementX || 0);
 

@@ -235,7 +235,6 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   ImageResizerCustomElement.prototype._moveInput = function _moveInput(e) {
     var _this3 = this;
 
-    e.preventDefault();
     var newY = this.y + (e.movementY || 0);
     var newX = this.x + (e.movementX || 0);
 
