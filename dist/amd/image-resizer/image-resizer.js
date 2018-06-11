@@ -242,7 +242,6 @@ define(['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
     ImageResizerCustomElement.prototype._moveInput = function _moveInput(e) {
       var _this3 = this;
 
-      e.preventDefault();
       var newY = this.y + (e.movementY || 0);
       var newX = this.x + (e.movementX || 0);
 

@@ -153,7 +153,6 @@ export class ImageResizerCustomElement {
   }
 
   _moveInput(e) {
-    e.preventDefault();
     const newY = this.y + (e.movementY || 0);
     const newX = this.x + (e.movementX || 0);
 
