@@ -182,21 +182,27 @@ export class ImageResizerCustomElement {
   }
 
   _resizeCanvas() {
+    const height = +this.height;
+    const width = +this.width;
+
     if (this._debouncedResizeCanvasTimeout) {
       clearTimeout(this._debouncedResizeCanvasTimeout);
     }
     this._debouncedResizeCanvasTimeout = setTimeout(() => {
       const ctx = this.canvas.getContext('2d');
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
+      this.canvas.width = width;
+      this.canvas.height = height;
 
       const img = new Image();
       img.onload = () => {
+        const imgRatio = img.height / img.width;
         const imgDim = Math.min(img.width, img.height);
-        let r = this.canvas.height / this.canvas.width;
+        let r = height / width;
         let resized = [imgDim, imgDim * r];
-        if (this.canvas.height > this.canvas.width) {
-          r = this.canvas.width / this.canvas.height;
+
+        if ((r > 1 && imgRatio > 1) ||
+             r < 1 && imgRatio < 1) {
+          r = width / height;
           resized = [imgDim * r, imgDim];
         }
 

@@ -268,21 +268,26 @@ var ImageResizerCustomElement = exports.ImageResizerCustomElement = (_dec = (0, 
   ImageResizerCustomElement.prototype._resizeCanvas = function _resizeCanvas() {
     var _this4 = this;
 
+    var height = +this.height;
+    var width = +this.width;
+
     if (this._debouncedResizeCanvasTimeout) {
       clearTimeout(this._debouncedResizeCanvasTimeout);
     }
     this._debouncedResizeCanvasTimeout = setTimeout(function () {
       var ctx = _this4.canvas.getContext('2d');
-      _this4.canvas.width = _this4.width;
-      _this4.canvas.height = _this4.height;
+      _this4.canvas.width = width;
+      _this4.canvas.height = height;
 
       var img = new Image();
       img.onload = function () {
+        var imgRatio = img.height / img.width;
         var imgDim = Math.min(img.width, img.height);
-        var r = _this4.canvas.height / _this4.canvas.width;
+        var r = height / width;
         var resized = [imgDim, imgDim * r];
-        if (_this4.canvas.height > _this4.canvas.width) {
-          r = _this4.canvas.width / _this4.canvas.height;
+
+        if (r > 1 && imgRatio > 1 || r < 1 && imgRatio < 1) {
+          r = width / height;
           resized = [imgDim * r, imgDim];
         }
 
